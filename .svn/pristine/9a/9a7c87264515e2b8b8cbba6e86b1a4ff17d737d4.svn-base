@@ -1,0 +1,12 @@
+package com.haoeyou.user.mvp.model;
+
+
+/**
+ * 类名: {@link FindPassModel}
+ * <br/> 功能描述:{@link com.haoeyou.user.activity.FindPassActivity}的Model层
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/23
+ */
+public class FindPassModel implements FindPassModelImp {
+
+}

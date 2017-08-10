@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "E:\\AS_CODE\\HaoEYou_User\\banner\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\gray_radius.xml",
+        "source": "E:\\AS_CODE\\HaoEYou_User\\banner\\build\\intermediates\\bundles\\debug\\res\\drawable\\gray_radius.xml"
+    },
+    {
+        "merged": "E:\\AS_CODE\\HaoEYou_User\\banner\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\white_radius.xml",
+        "source": "E:\\AS_CODE\\HaoEYou_User\\banner\\build\\intermediates\\bundles\\debug\\res\\drawable\\white_radius.xml"
+    },
+    {
+        "merged": "E:\\AS_CODE\\HaoEYou_User\\banner\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\black_background.xml",
+        "source": "E:\\AS_CODE\\HaoEYou_User\\banner\\build\\intermediates\\bundles\\debug\\res\\drawable\\black_background.xml"
+    }
+]

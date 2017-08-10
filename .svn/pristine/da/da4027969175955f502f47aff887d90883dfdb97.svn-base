@@ -1,0 +1,16 @@
+package com.haoeyou.user.mvp.model;
+
+import android.content.Context;
+
+import com.haoeyou.user.bean.SocialDocResponseBean;
+import com.haoeyou.user.event.MVPCallBack;
+
+/**
+ * Created by Mou on 2017/6/26.
+ */
+
+public interface MainModelImp {
+    void uploadFile(Context mContext, String jsonBean, MVPCallBack<Object> mvpCallBack);
+
+    void getCurrentAcountDoc(Context mContext, String jsonBean, MVPCallBack<SocialDocResponseBean> mBack);
+}

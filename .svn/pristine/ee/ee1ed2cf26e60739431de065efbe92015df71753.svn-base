@@ -1,0 +1,46 @@
+package com.haoeyou.user.bean;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Mou on 2017/6/15.
+ */
+
+public class AllDocResponseBean {
+    private String errorCode;
+    private String errorMsg;
+    private ArrayList<DocListBean> docList;
+
+    public AllDocResponseBean() {
+    }
+
+    public AllDocResponseBean(String errorCode, String errorMsg, ArrayList<DocListBean> docList) {
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
+        this.docList = docList;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+    public ArrayList<DocListBean> getDocList() {
+        return docList;
+    }
+
+    public void setDocList(ArrayList<DocListBean> docList) {
+        this.docList = docList;
+    }
+}

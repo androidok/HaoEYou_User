@@ -1,0 +1,40 @@
+package com.haoeyou.user.fragment;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+
+/**
+ * 类名: {@link SecondFragment}
+ * <br/> 功能描述:
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/18
+ * <br/> 最后修改者:
+ * <br/> 最后修改内容:
+ */
+public class SecondFragment extends BaseFragment {
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    @Override
+    protected int getlayoutId() {
+        return R.layout.fragment_second;
+    }
+
+    @Override
+    protected void initInjector() {
+
+    }
+
+    @Override
+    protected void initEventAndData() {
+
+    }
+
+    @Override
+    protected void lazyLoadData() {
+
+    }
+}

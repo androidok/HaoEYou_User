@@ -1,0 +1,58 @@
+package com.haoeyou.user.mvp.model;
+
+
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.bean.CodeBean;
+import com.haoeyou.user.bean.RegisterResponse;
+import com.haoeyou.user.event.MVPCallBack;
+import com.haoeyou.user.network.DataCallback;
+import com.haoeyou.user.network.NetWorking;
+
+import okhttp3.Call;
+
+/**
+ * 类名: {@link RegisterModel}
+ * <br/> 功能描述:{@link com.haoeyou.user.activity.RegisterActivity}的Model层
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/23
+ */
+public class RegisterModel implements RegisterModelImp {
+    @Override
+    public void getVerificationCode(Context mContext, String tel, MVPCallBack mBack) {
+        NetWorking.requestNetData("authorization/sendSMSCode", tel, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("sendSMSCode", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("sendSMSCode", response);
+            }
+        });
+    }
+
+    @Override
+    public void registerAccount(Context mContext, String jsonBean, final MVPCallBack mBack) {
+        NetWorking.requestNetData("userside/createUserAccount", jsonBean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("createUserAccount", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("createUserAccount", response);
+                RegisterResponse bean = new Gson().fromJson(response, RegisterResponse.class);
+                if ("1".equals(bean.getErrorCode())) {
+                    mBack.succeed(bean.getErrorMsg());
+                } else {
+                    mBack.failed(bean.getErrorMsg());
+                }
+            }
+        });
+    }
+}

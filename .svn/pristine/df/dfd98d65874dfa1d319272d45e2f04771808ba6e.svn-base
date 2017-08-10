@@ -1,0 +1,17 @@
+package com.haoeyou.user.common;
+
+
+/**
+ * 类名: {@link Common}
+ * <br/> 功能描述: 存储全局数据的基本类
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/19
+ */
+public class Common {
+    /*用户登录时间*/
+    public static String START_TIME = "";
+    /*用户退出时间*/
+    public static String END_TIME = "";
+    /*用户TOKEN*/
+    public static String TOKEN = "";
+}

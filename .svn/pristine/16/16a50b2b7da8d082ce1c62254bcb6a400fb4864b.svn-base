@@ -1,0 +1,159 @@
+package com.haoeyou.user.fragment;
+
+import android.content.Context;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.InfoListHolder;
+import com.haoeyou.user.adapter.UnfinishHolder;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.widget.dialog.AlertDialog;
+import com.youth.banner.Banner;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+
+/**
+ * Created by Mou on 2017/6/21.
+ */
+
+public class UnFinishFragment extends BaseFragment {
+    public final static String TAG = "UnFinishFragment";
+    @Bind(R.id.infor_recycle)
+    RecyclerView mInfoRecycle;
+    private Context mContext;
+    private BaseRecyclerAdapter mAdapter;
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.layout_unfinish;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+    }
+
+    @Override
+    protected void initEventAndData() {
+
+    }
+
+    @Override
+    protected void lazyLoadData() {
+        initRecycleView();
+    }
+
+    public void initRecycleView() {
+        LinearLayoutManager mgr = new LinearLayoutManager(mContext);
+        mgr.setOrientation(LinearLayoutManager.VERTICAL);
+        mInfoRecycle.setLayoutManager(mgr);
+        mInfoRecycle.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
+        setAdapter();
+    }
+
+    public void setAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        if (mInfoRecycle == null)
+            return;
+        if (mAdapter == null) {
+            mAdapter = new BaseRecyclerAdapter(list, R.layout.adapter_unfinish_item, UnfinishHolder.class, new 
+                    ItemListener() {
+                @Override
+                public void onItemClick(View view, int position, Object mData) {
+                    itemClick(position);
+                }
+            });
+            mInfoRecycle.setAdapter(mAdapter);
+        } else {
+            if ((mAdapter.getItem(0) == null) && (list.size() == 0))
+                return;
+            if ((mAdapter.getItem(0) == null) || (list.size() == 0))
+                mAdapter.setmDatas(list);
+        }
+    }
+
+    private void itemClick(int position) {
+        switch (position) {
+            case 0:
+                showPayDialog();
+                break;
+            case 1:
+                showRejectDialog();
+                break;
+            case 2:
+                break;
+
+            case 3:
+                break;
+
+        }
+    }
+
+    /**
+     * 付款Dialog,书面会诊/我的预约
+     */
+    private void showPayDialog() {
+        // 加载布局  dialog
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_spcial_dialog, null);
+        ((TextView) view.findViewById(R.id.name)).setText("王麻子");
+        ((TextView) view.findViewById(R.id.item)).setText("aizibinghuizhen");
+        ((TextView) view.findViewById(R.id.service_need)).setText("ak47");
+        ((TextView) view.findViewById(R.id.reason)).setText("等你交了钱我们就通过");
+
+        new AlertDialog(mContext).setWidthRatio(0.92f).builder().addView(view).setCancelable(false).setTitle
+                ("还未付款，，线下付款").setNegativeButton("取消订单", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("取消订单");
+            }
+        }).setPositiveButton("我知道了", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("我知道了");
+            }
+        })/*.setTitleSize(13)*/.show();
+    }
+
+    /**
+     * 审核不通过Dialog,赴美就医\用药咨询\手术预约
+     */
+    private void showRejectDialog() {
+        // 加载布局  dialog
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_spcial_dialog, null);
+        ((TextView) view.findViewById(R.id.name)).setText("王麻子");
+        ((TextView) view.findViewById(R.id.item)).setText("aizibinghuizhen");
+        ((TextView) view.findViewById(R.id.service_need)).setText("ak47");
+        ((TextView) view.findViewById(R.id.reason)).setText("等你交了钱我们就通过");
+
+        new AlertDialog(mContext).setWidthRatio(0.92f).builder().addView(view).setCancelable(false).setTitle
+                ("还未付款，，线下付款").setPositiveButton("我知道了", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("我知道了");
+            }
+        })/*.setTitleSize(13)*/.show();
+    }
+
+}

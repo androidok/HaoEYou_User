@@ -1,0 +1,19 @@
+package com.haoeyou.user.mvp.model;
+
+import android.content.Context;
+
+import com.haoeyou.user.bean.AddMedicalBean;
+import com.haoeyou.user.bean.ImageUrlResponseBean;
+import com.haoeyou.user.event.MVPCallBack;
+import com.yalantis.ucrop.entity.LocalMedia;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Mou on 2017/7/4.
+ */
+
+public interface AddModelImp {
+    void uploadFile(Context mContext, AddMedicalBean bean, List<LocalMedia> selectMedia, MVPCallBack<ArrayList<ImageUrlResponseBean>> mBack);
+}

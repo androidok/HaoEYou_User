@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="banner-1.4.9">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/9f7a351f904e81fe7914323f7977092b691e34ae/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/9f7a351f904e81fe7914323f7977092b691e34ae/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

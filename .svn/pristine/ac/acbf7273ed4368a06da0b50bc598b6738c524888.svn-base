@@ -1,0 +1,8 @@
+package com.haoeyou.user.mvp.model;
+
+/**
+ * Created by Mou on 2017/6/1.
+ */
+
+public interface SecondModelImp extends BaseModel {
+}

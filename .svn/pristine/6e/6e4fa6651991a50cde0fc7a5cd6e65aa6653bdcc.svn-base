@@ -1,0 +1,169 @@
+package com.haoeyou.user.activity;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.haoeyou.user.R;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.HistoryDetailHolder;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.luck.picture.lib.model.PictureConfig;
+import com.yalantis.ucrop.entity.LocalMedia;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class HistoryDetailActivity extends BaseActivity implements ItemListener {
+    public final static String TAG = "HistoryDetailActivity";
+    @Bind(R.id.pic_list)
+    RecyclerView mPicList;
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.more)
+    TextView mMore;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    private Context mContext;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_history_detail;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = this;
+        ButterKnife.bind(this);
+        onTintStatusBar();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        getIntentData();
+        initRecyclerView();
+    }
+
+    private void getIntentData() {
+
+        mTitleTv.setText("骨髓检测详细报告");
+    }
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    private void initRecyclerView() {
+        GridLayoutManager mgr = new GridLayoutManager(mContext, 4);
+        mPicList.setLayoutManager(mgr);
+        mPicList.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) {
+                outRect.set(10, 10, 10, 20);
+            }
+        });
+
+        setAdapter();
+    }
+
+    BaseRecyclerAdapter mAdapter;
+
+    public void setAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        if (mPicList == null)
+            return;
+        if (mAdapter == null) {
+            mAdapter = new BaseRecyclerAdapter(mContext, list, R.layout.adapter_history_detail_item, 
+                    HistoryDetailHolder.class, this);
+            mPicList.setAdapter(mAdapter);
+        } else {
+            if ((mAdapter.getItem(0) == null) && (list.size() == 0))
+                return;
+            if ((mAdapter.getItem(0) == null) || (list.size() == 0))
+                mAdapter.setmDatas(list);
+        }
+    }
+
+
+    @Override
+    public void onItemClick(View view, int position, Object mData) {
+        List<LocalMedia> selectMedia = new ArrayList<>();
+        String path = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1495791354844&di" + 
+                "=23f3f45b3953f29db1326b4ee4caa4f2&imgtype=0&src=http%3A%2F%2Fpic.58pic" + "" + "" + "" + "" + "" + 
+                "" + ".com%2F58pic%2F14%2F61%2F42%2F51s58PICuGy_1024.jpg";
+        String path1 = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1495864349655&di" + 
+                "=cc49eb90f921496ecbbb7c4a342b67f1&imgtype=0&src=http%3A%2F%2Fwww" + "" + "" + "" + "" + "" + "" + ""
+                + ".qq745.com%2Fuploads%2Fallimg%2F141231%2F1-1412310J545.jpg";
+        String path2 = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1495864349654&di" + 
+                "=6d4270af19bfd26f2e4dbd947ac62205&imgtype=0&src=http%3A%2F%2Fimg1.3lian" + "" + "" + "" + "" + "" + 
+                ".com%2Fimg013%2Fv4%2F96%2F44.jpg";
+        String path3 = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1495864349653&di" + 
+                "=d54a333ca43a72cfc12fabfec78a85c9&imgtype=0&src=http%3A%2F%2Fimg3.3lian" + "" + "" + "" + "" + "" + 
+                ".com%2F2013%2Fv10%2F4%2F88.jpg";
+        String path4 = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1495864349653&di" + 
+                "=1a386566e32663c2fa2902a39fb28bfe&imgtype=0&src=http%3A%2F%2Fimg15.3lian" + "" + "" + "" + "" + "" +
+                ".com%2F2015%2Ff2%2F159%2F113.jpg";
+        String path5 = "https://timgsa.baidu" + "" + "" +
+                ".com/timg?image&quality=80&size=b9999_10000&sec=1495867644026&di=1d893ae1f3c49257e22f84b22b72a32f" +
+                "&imgtype=0&src=http%3A%2F%2Fe.hiphotos.baidu" + "" + "" +
+                ".com%2Fzhidao%2Fpic%2Fitem%2Fae51f3deb48f8c54f873d7cc3a292df5e1fe7fb4.jpg";
+        selectMedia.add(new LocalMedia(path, 1, 1, false, 1, 1, 0));
+        selectMedia.add(new LocalMedia(path1, 1, 1, false, 1, 1, 0));
+        selectMedia.add(new LocalMedia(path2, 1, 1, false, 1, 1, 0));
+        selectMedia.add(new LocalMedia(path3, 1, 1, false, 1, 1, 0));
+        selectMedia.add(new LocalMedia(path4, 1, 1, false, 1, 1, 0));
+        selectMedia.add(new LocalMedia(path5, 1, 1, false, 1, 1, 0));
+        PictureConfig.getInstance().externalPicturePreview((Activity) mContext, position, selectMedia);
+    }
+
+    /**
+     * @param ct   上下文
+     * @param from 从哪儿跳来的
+     */
+    public static void startAction(Context ct, String from, String itemTile, List<LocalMedia> selectMedia) {
+        Intent intent = new Intent(ct, HistoryDetailActivity.class);
+        intent.putExtra("previewSelectList", (Serializable) selectMedia);
+        intent.putExtra("ITEM_TILE", itemTile);
+        intent.putExtra(Common.FROM, from);
+        ct.startActivity(intent);
+    }
+
+
+    @OnClick({R.id.title_back, R.id.more})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.title_back:
+                finish();
+                break;
+            case R.id.more:
+                break;
+        }
+    }
+
+}

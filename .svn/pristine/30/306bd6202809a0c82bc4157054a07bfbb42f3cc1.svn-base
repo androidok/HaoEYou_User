@@ -1,0 +1,54 @@
+package com.haoeyou.user.adapter;
+
+import android.view.View;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.EvaluateActivity;
+import com.haoeyou.user.fragment.FinishFragment;
+
+import butterknife.Bind;
+import butterknife.OnClick;
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class FinishHolder extends BaseHolder<String> {
+
+    @Bind(R.id.name)
+    TextView mName;
+    @Bind(R.id.time)
+    TextView mTime;
+    @Bind(R.id.project)
+    TextView mProject;
+    @Bind(R.id.order_num)
+    TextView mOrderNum;
+    @Bind(R.id.evaluate_tv)
+    TextView mEvaluateTv;
+
+    public FinishHolder(View view) {
+        super(view);
+    }
+
+    @Override
+
+    public void setData(String mData) {
+        super.setData(mData);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+
+    @OnClick(R.id.evaluate_tv)
+    public void onViewClicked() {
+        EvaluateActivity.startAction(mContext, FinishFragment.TAG);
+    }
+}

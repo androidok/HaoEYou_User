@@ -1,0 +1,203 @@
+package com.haoeyou.user.fragment;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.DoctorActivity;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.DepartListHolder;
+import com.haoeyou.user.adapter.DoctorListHolder;
+import com.haoeyou.user.adapter.InfoListHolder;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.mvp.presenter.SecondPresenter;
+import com.haoeyou.user.mvp.view.SecondFragmentView;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+/**
+ * 类名: {@link SecondFragment}
+ * <br/> 功能描述:
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/18
+ * <br/> 最后修改者:
+ * <br/> 最后修改内容:
+ */
+public class SecondFragment extends BaseFragment implements SecondFragmentView {
+    public final static String TAG = "SecondFragment";
+    private Context mContext;
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.image_more)
+    ImageView mImageMore;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.more)
+    TextView mMore;
+    @Bind(R.id.item_name)
+    TextView mItem;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    @Bind(R.id.select_icon)
+    ImageView mSelectIcon;
+    @Bind(R.id.select_layout)
+    FrameLayout mSelectLayout;
+    @Bind(R.id.doctor_recycle)
+    RecyclerView mDoctorRecycle;
+    @Bind(R.id.department_recycle)
+    RecyclerView mDepartmentRecycle;
+    @Bind(R.id.nothing)
+    View mNothing;
+    @Bind(R.id.department_select)
+    LinearLayout mDepartmentLayout;
+
+    private BaseRecyclerAdapter mDoctorAdapter;
+    private BaseRecyclerAdapter mDepartmentAdapter;
+
+    @Override
+    public BasePresenter getPresenter() {
+        return new SecondPresenter();
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_second;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        initWidget();
+        initRecyclerView();
+    }
+
+    private void initWidget() {
+        mTitleTv.setText("医 生");
+        mMore.setVisibility(View.GONE);
+        mImageMore.setImageResource(R.drawable.search_glass);
+        mImageMore.setVisibility(View.VISIBLE);
+        mTitleBack.setVisibility(View.INVISIBLE);
+    }
+
+    private void initRecyclerView() {
+        LinearLayoutManager mgrDoctor = new LinearLayoutManager(mContext);
+        mgrDoctor.setOrientation(LinearLayoutManager.VERTICAL);
+        mDoctorRecycle.setLayoutManager(mgrDoctor);
+        //        mDoctorRecycle.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
+
+        LinearLayoutManager mgrDepart = new LinearLayoutManager(mContext);
+        mgrDepart.setOrientation(LinearLayoutManager.VERTICAL);
+        mDepartmentRecycle.setLayoutManager(mgrDepart);
+        mDepartmentRecycle.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
+        setDoctorAdapter();
+        setDepartmentAdapter();
+    }
+
+    @Override
+    protected void lazyLoadData() {
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
+    @OnClick({R.id.title_back, R.id.more, R.id.select_layout, R.id.nothing})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.title_back:
+                break;
+            case R.id.image_more:
+
+                break;
+            case R.id.select_layout:
+                mDepartmentLayout.setVisibility(View.VISIBLE);
+                break;
+            case R.id.nothing:
+                mDepartmentLayout.setVisibility(View.INVISIBLE);
+                break;
+        }
+    }
+
+    public void setDoctorAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add("1");
+        }
+        if (mDoctorRecycle == null)
+            return;
+        if (mDoctorAdapter == null) {
+            mDoctorAdapter = new BaseRecyclerAdapter(list, R.layout.adapter_doctor_item, DoctorListHolder.class, new 
+                    ItemListener<String>() {
+                @Override
+                public void onItemClick(View view, int position, String mData) {
+                    DoctorActivity.startAction(mContext, SecondFragment.TAG);
+                }
+            });
+            mDoctorRecycle.setAdapter(mDoctorAdapter);
+        } else {
+            if ((mDoctorAdapter.getItem(0) == null) && (list.size() == 0))
+                return;
+            if ((mDoctorAdapter.getItem(0) == null) || (list.size() == 0))
+                mDoctorAdapter.setmDatas(list);
+        }
+    }
+
+    public void setDepartmentAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add("1");
+        }
+        if (mDepartmentRecycle == null)
+            return;
+        if (mDepartmentAdapter == null) {
+            mDepartmentAdapter = new BaseRecyclerAdapter(list, R.layout.adapter_depart_item, DepartListHolder.class, 
+                    new ItemListener<String>() {
+                @Override
+                public void onItemClick(View view, int position, String mData) {
+                    mItem.setText("Ronald McGee M.D");
+                    mDepartmentLayout.setVisibility(View.INVISIBLE);
+                }
+            });
+            mDepartmentRecycle.setAdapter(mDepartmentAdapter);
+        } else {
+            if ((mDepartmentAdapter.getItem(0) == null) && (list.size() == 0))
+                return;
+            if ((mDepartmentAdapter.getItem(0) == null) || (list.size() == 0))
+                mDepartmentAdapter.setmDatas(list);
+        }
+    }
+
+    @Override
+    public void showLoadProgressDialog(String str) {
+
+    }
+
+    @Override
+    public void disDialog() {
+
+    }
+}

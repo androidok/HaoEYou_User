@@ -1,0 +1,11 @@
+package com.haoeyou.user.entity;
+
+import android.widget.EditText;
+
+/**
+ * Created by Mou on 2017/6/6.
+ */
+
+public interface PickerListener {
+    void pickerData(String data);
+}

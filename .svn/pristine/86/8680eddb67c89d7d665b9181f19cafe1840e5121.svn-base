@@ -1,0 +1,11 @@
+package com.haoeyou.user.mvp.presenter;
+
+/**
+ * 类名: {@link MainFragmentPresenter}
+ * <br/> 功能描述:主功能界面的解析层
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/22
+ */
+public class MainFragmentPresenter extends BasePresenter {
+
+}

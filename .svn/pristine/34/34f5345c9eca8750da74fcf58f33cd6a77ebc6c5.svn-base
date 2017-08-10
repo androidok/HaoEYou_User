@@ -1,0 +1,211 @@
+package com.haoeyou.user.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.haoeyou.user.R;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.bean.LoginBean;
+import com.haoeyou.user.bean.RegisterBean;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.mvp.presenter.LoginPresenter;
+import com.haoeyou.user.mvp.view.LoginActivityView;
+import com.haoeyou.user.utils.PhoneFormatCheckUtils;
+import com.haoeyou.user.utils.SharedPreferencesHelper;
+import com.haoeyou.user.widget.CircleImageView;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class LoginActivity extends BaseActivity implements LoginActivityView {
+    public final static String TAG = "LoginActivity";
+    @Bind(R.id.head_pic)
+    CircleImageView mHeadPic;
+    @Bind(R.id.account)
+    EditText mAccount;
+    @Bind(R.id.password)
+    EditText mPassword;
+    @Bind(R.id.register)
+    TextView mRegister;
+    @Bind(R.id.find_password)
+    TextView mFindPass;
+    @Bind(R.id.normal_btn)
+    Button mLoginBtn;
+    @Bind(R.id.button_layout)
+    LinearLayout mButtonLayout;
+    private Context mContext;
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    private Boolean telFlag = false;
+    private Boolean passFlag = false;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    protected void initInjector() {
+        //onTintStatusBar();
+        mContext = this;
+        ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void initEventAndData() {
+        mTitleTv.setText(R.string.login);
+        setOnChangeListener();
+        mAccount.setText(Common.ACCOUNT);
+        if (!TextUtils.isEmpty(Common.HEAD_URL)) {
+            Glide.with(mContext).load(Common.HEAD_URL).centerCrop().error(R.drawable.login_head).diskCacheStrategy
+                    (DiskCacheStrategy.ALL).into(mHeadPic);
+        }
+    }
+
+    @Override
+    public BasePresenter getPresenter() {
+        return new LoginPresenter();
+    }
+
+    @OnClick({R.id.title_back, R.id.title_tv, R.id.toolbar_layout, R.id.head_pic, R.id.register, R.id.find_password, 
+            R.id.normal_btn})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.title_back:
+                finish();
+                break;
+            case R.id.title_tv:
+                break;
+            case R.id.toolbar_layout:
+                break;
+            case R.id.register:
+                RegisterActivity.startAction(mContext, LoginActivity.TAG);
+                break;
+            case R.id.find_password:
+                FindPassActivity.startAction(mContext, LoginActivity.TAG);
+                break;
+            case R.id.normal_btn:
+                String jsonBean = new Gson().toJson(new LoginBean(mAccount.getText().toString(), mPassword.getText()
+                        .toString()));
+                ((LoginPresenter) mPresenter).login(mContext, mAccount.getText().toString(), jsonBean);
+                break;
+        }
+    }
+
+    private void setOnChangeListener() {
+        mAccount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (PhoneFormatCheckUtils.isChinaPhoneLegal(mAccount.getText().toString().trim())) {
+                    telFlag = true;
+                    checkIsCanRegister();
+                } else {
+                    telFlag = false;
+                }
+            }
+        });
+        mPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (6 <= mPassword.getText().toString().trim().length()) {
+                    passFlag = true;
+                    checkIsCanRegister();
+                } else {
+                    passFlag = false;
+                }
+            }
+        });
+    }
+
+    private void checkIsCanRegister() {
+        if (telFlag && passFlag) {
+            mLoginBtn.setBackgroundResource(R.drawable.selector_save);
+            mLoginBtn.setClickable(true);
+        } else {
+            mLoginBtn.setBackgroundResource(R.drawable.gray_background);
+            mLoginBtn.setClickable(false);
+        }
+    }
+
+    @Override
+    public void showLoadProgressDialog(String str) {
+    }
+
+    @Override
+    public void disDialog() {
+
+    }
+
+    @Override
+    public void loginSuccess() {
+        //TODO 登录成功,跳转主界面的时候,将
+        Common.ACCOUNT = mAccount.getText().toString();
+        SharedPreferencesHelper.putString(mContext, "ACCOUNT", Common.ACCOUNT);
+        if (Common.IS_FIRST_LOAD) {
+            FillingActivity.startAction(mContext, LoginActivity.TAG);
+        }
+        Common.IS_FIRST_LOAD = false;
+        finish();
+    }
+
+    @Override
+    public void loginFailed(String message) {
+        showBaseMessageDialog(message);
+    }
+
+    /**
+     * @param ct   上下文
+     * @param from 从哪儿跳来的
+     */
+    public static void startAction(Context ct, String from) {
+        Intent itt = new Intent(ct, LoginActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        itt.putExtras(bundle);
+        ct.startActivity(itt);
+    }
+
+}

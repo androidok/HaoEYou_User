@@ -1,0 +1,383 @@
+package com.haoeyou.user.fragment;
+
+import android.content.Context;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.ChatActivity;
+import com.haoeyou.user.activity.DoctorActivity;
+import com.haoeyou.user.activity.LoginActivity;
+import com.haoeyou.user.activity.MainActivity;
+import com.haoeyou.user.activity.NewsActivity;
+import com.haoeyou.user.activity.NewsGroupActivity;
+import com.haoeyou.user.activity.ServicePageActivity;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.InfoListHolder;
+import com.haoeyou.user.adapter.ServiceListHolder;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.bean.Artical;
+import com.haoeyou.user.bean.Banner;
+import com.haoeyou.user.bean.DoctorBanner;
+import com.haoeyou.user.bean.Doctors;
+import com.haoeyou.user.bean.HomeDataResponse;
+import com.haoeyou.user.bean.ServiceBean;
+import com.haoeyou.user.bean.WaiterResponseBean;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.mvp.presenter.MainFragmentPresenter;
+import com.haoeyou.user.mvp.view.MainFragmentView;
+import com.haoeyou.user.utils.ButtonTools;
+import com.haoeyou.user.utils.ScreenUtil;
+import com.haoeyou.user.utils.SharedPreferencesHelper;
+import com.haoeyou.user.widget.CircleImageView;
+import com.haoeyou.user.widget.SmartScrollView;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.util.NetUtils;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.listener.OnBannerListener;
+import com.youth.banner.loader.ImageLoader;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.OnClick;
+
+/**
+ * 类名: {@link MainFragment}
+ * <br/> 功能描述:
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/18
+ * <br/> 最后修改者:
+ * <br/> 最后修改内容:
+ */
+public class MainFragment extends BaseFragment implements MainFragmentView {
+    public final static String TAG = "MainFragment";
+    @Bind(R.id.scroll)
+    SmartScrollView mScroll;
+    @Bind(R.id.banner)
+    com.youth.banner.Banner mBanner;
+    @Bind(R.id.doctor_banner)
+    com.youth.banner.Banner mDoctorBanner;
+    @Bind(R.id.infor_recycle)
+    RecyclerView mInfoRecycle;
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.image_more)
+    ImageView mMore;
+    @Bind(R.id.dian)
+    ImageView mDian;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    @Bind(R.id.more_info)
+    TextView mMoreInfo;
+    @Bind(R.id.content_layout)
+    LinearLayout mLayout;
+    @Bind(R.id.service_recyc)
+    RecyclerView mServiceRecycle;
+    @Bind(R.id.head_pic)
+    CircleImageView mCirclePic;
+    private Context mContext;
+    private List<Banner> bannerList = new ArrayList<Banner>();
+    private List<DoctorBanner> doctorBanerList = new ArrayList<DoctorBanner>();
+    private BaseRecyclerAdapter mInfoAdapter;
+    private BaseRecyclerAdapter mServiceAdapter;
+    private HomeDataResponse homeData;
+    ArrayList<Artical> articleList = new ArrayList<>();
+    private ArrayList<ServiceBean> serviceList = new ArrayList<>();
+
+    @Override
+    public BasePresenter getPresenter() {
+        return new MainFragmentPresenter();
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_main;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        initWidget();
+        initServiceRecycleView();
+        initInfoRecycleView();
+        if (NetUtils.hasNetwork(mContext)) {
+            ((MainFragmentPresenter) mPresenter).getHomeData(mContext);
+        } else {
+            String response = SharedPreferencesHelper.getString(mContext, "HOME_DATA", "");
+            if (TextUtils.isEmpty(response))
+                return;
+            getHomeData(new Gson().fromJson(response, HomeDataResponse.class));
+        }
+    }
+
+    @Override
+    public void onConnectionConnected() {
+        super.onConnectionConnected();
+        //        ((MainFragmentPresenter) mPresenter).getHomeData(mContext);
+    }
+
+    @OnClick({R.id.head_pic, R.id.more_info, R.id.image_more})
+    public void onViewClicked(View view) {
+        ButtonTools.disabledView(view, 1);
+        switch (view.getId()) {
+            case R.id.head_pic:
+                ((MainActivity) getActivity()).changeDrawerLayout();
+                break;
+            case R.id.more_info:
+                NewsGroupActivity.startAction(mContext, MainFragment.TAG);
+                break;
+            case R.id.image_more:
+                if (Common.IS_FIRST_LOAD || TextUtils.isEmpty(Common.TOKEN) || !EMClient.getInstance().isConnected()) {
+                    LoginActivity.startAction(mContext, Common.ACCOUNT, MainActivity.TAG);
+                } else {
+                    ((MainFragmentPresenter) mPresenter).getMyWaiter(mContext);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    private void initWidget() {
+        mMore.setVisibility(View.VISIBLE);
+        mTitleBack.setVisibility(View.GONE);
+        mCirclePic.setVisibility(View.VISIBLE);
+        mDian.setVisibility(View.VISIBLE);
+        Glide.with(mContext).load(Common.HEAD_URL).centerCrop().error(R.drawable.login_head).diskCacheStrategy
+                (DiskCacheStrategy.ALL).into(mCirclePic);
+        mMore.setImageResource(R.drawable.service);
+        mTitleTv.setText("首页");
+        mScroll.setScanScrollChangedListener(new SmartScrollView.ISmartScrollChangedListener() {
+            @Override
+            public void onScrolledToBottom() {
+            }
+
+            @Override
+            public void onScrolledToTop() {
+                if (NetUtils.hasNetwork(mContext))
+                    ((MainFragmentPresenter) mPresenter).getHomeData(mContext);
+            }
+        });
+    }
+
+    /**
+     * 初始化banner
+     */
+    private void initBanner() {
+        LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) mBanner.getLayoutParams();
+        linearParams.height = (int) (ScreenUtil.getScreenWidth(mContext) / 2.4);// 控件的宽强制设成30   
+        mBanner.setLayoutParams(linearParams); //使设置好的布局参数应用到控件
+        mBanner.setIndicatorGravity(BannerConfig.RIGHT);
+        //设置图片集合
+        mBanner.setImages(bannerList);
+        //设置图片加载器
+        mBanner.setImageLoader(new ImageLoader() {
+            @Override
+            public void displayImage(Context context, Object o, ImageView imageView) {
+                Banner bean = (Banner) o;
+                Glide.with(mContext).load(Common.BASE_URL.replace("/api/", bean.getOpen_image_url())).error(R
+                        .drawable.banner_title).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+            }
+        });
+
+        //设置点击事件监听
+        mBanner.setOnBannerListener(new OnBannerListener() {
+            @Override
+            public void OnBannerClick(int i) {
+                if (TextUtils.isEmpty(bannerList.get(i).getOpen_htmlurl()))
+                    return;
+                NewsActivity.startAction(mContext, MainFragment.TAG, new Artical("", bannerList.get(i)
+                        .getOpen_htmlurl(), "", ""));
+            }
+        });
+        //banner设置方法全部调用完毕时最后调用
+        mBanner.start();
+    }
+
+    /**
+     * 初始化banner
+     */
+    private void initDoctorBanner() {
+        mDoctorBanner.isAutoPlay(false);
+        mDoctorBanner.setIndicatorGravity(BannerConfig.RIGHT);
+        mDoctorBanner.setImages(doctorBanerList);
+        mDoctorBanner.setImageLoader(new ImageLoader() {
+            @Override
+            public void displayImage(Context context, Object o, ImageView imageView) {
+                DoctorBanner bean = (DoctorBanner) o;
+                Glide.with(context).load(Common.BASE_URL.replace("/api/", bean.getOpen_image_url())).error(R.drawable
+                        .banner_title).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+            }
+        });
+        mDoctorBanner.setOnBannerListener(new OnBannerListener() {
+            @Override
+            public void OnBannerClick(int i) {
+                if (TextUtils.isEmpty(doctorBanerList.get(i).getOpen_htmlurl()))
+                    return;
+                DoctorActivity.startAction(mContext, SecondFragment.TAG, new Doctors("", "", doctorBanerList.get(i)
+                        .getOpen_htmlurl(), "", "", "", "", "", "", "", ""));
+            }
+        });
+        mDoctorBanner.start();
+    }
+
+    public void initServiceRecycleView() {
+        LinearLayoutManager mgr = new LinearLayoutManager(mContext);
+        mgr.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mServiceRecycle.setLayoutManager(mgr);
+        setServiceAdapter();
+    }
+
+    public void initInfoRecycleView() {
+        LinearLayoutManager mgr = new LinearLayoutManager(mContext);
+        mgr.setOrientation(LinearLayoutManager.VERTICAL);
+        //        mgr.setSmoothScrollbarEnabled(false);
+        mInfoRecycle.setNestedScrollingEnabled(false);
+        mInfoRecycle.setLayoutManager(mgr);
+        mInfoRecycle.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
+        setInfoAdapter();
+    }
+
+    public void setServiceAdapter() {
+        if (mServiceRecycle == null)
+            return;
+        if (mServiceAdapter == null) {
+            mServiceAdapter = new BaseRecyclerAdapter(mContext, serviceList, R.layout.adapter_service_item, 
+                    ServiceListHolder.class, new ItemListener<ServiceBean>() {
+                @Override
+                public void onItemClick(View view, int position, ServiceBean mData) {
+                    if (TextUtils.isEmpty(mData.getOpen_htmlurl()))
+                        return;
+                    ServicePageActivity.startAction(mContext, MainActivity.TAG, Common.BASE_URL.replace("/api/", 
+                            mData.getOpen_htmlurl()), mData.getName());
+                }
+            });
+            mServiceRecycle.setAdapter(mServiceAdapter);
+        }
+    }
+
+    public void setInfoAdapter() {
+        if (mInfoRecycle == null)
+            return;
+        if (mInfoAdapter == null) {
+            mInfoAdapter = new BaseRecyclerAdapter(mContext, articleList, R.layout.adapter_info_item, InfoListHolder
+                    .class, new ItemListener<Artical>() {
+                @Override
+                public void onItemClick(View view, int position, Artical mData) {
+                    if (TextUtils.isEmpty(mData.getOpen_htmlurl()))
+                        return;
+                    NewsActivity.startAction(mContext, MainFragment.TAG, mData);
+                }
+            });
+            mInfoRecycle.setAdapter(mInfoAdapter);
+        }
+    }
+
+    @Override
+    protected void lazyLoadData() {
+
+    }
+
+    @Override
+    public void showLoadProgressDialog(String str) {
+        showLoading("");
+    }
+
+
+    @Override
+    public void disDialog() {
+        dissLoadDialog();
+    }
+
+    @Override
+    public void getHomeData(HomeDataResponse mData) {
+        if (mData == null || mLayout == null) {
+            return;
+        }
+        mLayout.setVisibility(View.VISIBLE);
+        homeData = mData;
+        if (mData.getArticle_list() != null && mData.getArticle_list().size() != 0) {
+            if (articleList.size() != 0)
+                articleList.clear();
+            articleList.addAll(mData.getArticle_list());
+            mInfoAdapter.notifyDataSetChanged();
+        }
+        if (mData.getService_list() != null && mData.getService_list().size() != 0) {
+            if (serviceList.size() != 0)
+                serviceList.clear();
+            serviceList.addAll(mData.getService_list());
+            mServiceAdapter.notifyDataSetChanged();
+        }
+        if (mData.getBanner_list() != null && mData.getBanner_list().size() != 0) {
+            setBanner(mData.getBanner_list());
+        }
+        if (mData.getDoctor_list() != null && mData.getArticle_list().size() != 0) {
+            setDoctorBanner(mData.getDoctor_list());
+        }
+    }
+
+    @Override
+    public void getMyWaiterSuccess(WaiterResponseBean mData) {
+        ChatActivity.startAction(mContext, mData.getWaiter_account());
+    }
+
+    @Override
+    public void getMyWaiterFailed(String message) {
+        showBaseMessageDialog(message);
+    }
+
+    private void setBanner(ArrayList<Banner> banner_list) {
+        if (bannerList.size() != 0)
+            bannerList.clear();
+        bannerList.addAll(banner_list);
+        initBanner();
+    }
+
+    private void setDoctorBanner(ArrayList<DoctorBanner> doctor_list) {
+        if (doctorBanerList.size() != 0)
+            doctorBanerList.clear();
+        doctorBanerList.addAll(doctor_list);
+        initDoctorBanner();
+    }
+
+    @Override
+    public void onResume() {
+        if (mBanner != null) {
+            mBanner.startAutoPlay();
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (mBanner != null) {
+            mBanner.stopAutoPlay();
+        }
+        super.onDestroyView();
+    }
+
+    public ImageView getTitleBack() {
+        return mCirclePic;
+    }
+}

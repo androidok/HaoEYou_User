@@ -1,0 +1,58 @@
+package com.haoeyou.user.mvp.model;
+
+
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.bean.BasicResponseBean;
+import com.haoeyou.user.event.MVPCallBack;
+import com.haoeyou.user.network.DataCallback;
+import com.haoeyou.user.network.NetWorking;
+
+import okhttp3.Call;
+
+/**
+ * 类名: {@link FindPassModel}
+ * <br/> 功能描述:{@link com.haoeyou.user.activity.FindPassActivity}的Model层
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/23
+ */
+public class FindPassModel implements FindPassModelImp {
+
+    @Override
+    public void getVerificationCode(Context mContext, String jsonBen, MVPCallBack mBack) {
+        NetWorking.requestNetData("account/sendSMSCode", jsonBen, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("sendSMSCode", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("sendSMSCode", response);
+            }
+        });
+    }
+
+    @Override
+    public void resetPassword(Context mContext, String jsonBen, final MVPCallBack mBack) {
+        NetWorking.requestNetData("account/resetUserPassword", jsonBen, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("resetUserPassword", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("resetUserPassword", response);
+                BasicResponseBean bean = new Gson().fromJson(response, BasicResponseBean.class);
+                if ("1".equals(bean.getErrorCode())) {
+                    mBack.succeed("");
+                } else {
+                    mBack.failed(bean.getErrorMsg());
+                }
+            }
+        });
+    }
+}

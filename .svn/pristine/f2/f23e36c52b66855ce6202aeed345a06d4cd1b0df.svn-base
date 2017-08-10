@@ -1,0 +1,47 @@
+package com.haoeyou.user.adapter;
+
+import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.haoeyou.user.R;
+
+import butterknife.Bind;
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class HistoryDetailHolder extends BaseHolder<String> {
+    private Context mContext;
+    @Bind(R.id.image)
+    ImageView mImage;
+
+    public HistoryDetailHolder(View view) {
+        super(view);
+        mContext = view.getContext();
+    }
+
+    @Override
+    public void setData(String mData) {
+        super.setData(mData);
+        String path = "https://timgsa.baidu" + "" +
+                ".com/timg?image&quality=80&size=b9999_10000&sec=1495864349655&di=cc49eb90f921496ecbbb7c4a342b67f1" +
+                "&imgtype=0&src=http%3A%2F%2Fwww.qq745.com%2Fuploads%2Fallimg%2F141231%2F1-1412310J545.jpg";
+        Glide.with(mContext).load(path).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).override(90, 90)
+                .into(mImage);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+}

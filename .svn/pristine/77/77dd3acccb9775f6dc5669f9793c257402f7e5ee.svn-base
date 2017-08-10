@@ -1,0 +1,46 @@
+package com.haoeyou.user.adapter;
+
+import android.graphics.Color;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+
+import butterknife.Bind;
+
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class ReportListHolder extends BaseHolder<String> {
+    @Bind(R.id.tv_child)
+    TextView mTvChild;
+    @Bind(R.id.detail_date)
+    TextView mDetailDate;
+    @Bind(R.id.itemView)
+    LinearLayout mItemView;
+
+    public ReportListHolder(View view) {
+        super(view);
+        view.setBackgroundColor(Color.parseColor("#FFFFFF"));
+    }
+
+    @Override
+    public void setData(String mData) {
+        super.setData(mData);
+        mTvChild.setText("张三的肠胃检测报告");
+        mDetailDate.setText("三生三世");
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+}

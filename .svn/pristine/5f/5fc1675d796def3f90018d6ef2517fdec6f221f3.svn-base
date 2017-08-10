@@ -1,0 +1,16 @@
+package com.haoeyou.user.mvp.model;
+
+import android.content.Context;
+
+import com.haoeyou.user.event.MVPCallBack;
+
+/**
+ * Created by Mou on 2017/5/24.
+ */
+
+public class CareDepartmentModel implements CareDepartmentModelImp {
+    @Override
+    public void requestDepartment(Context mContext, MVPCallBack mBack) {
+        
+    }
+}

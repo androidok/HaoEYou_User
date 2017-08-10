@@ -1,0 +1,10 @@
+package com.haoeyou.user.mvp.model;
+
+/**
+ * 类名: {@link RegisterModelImp}
+ * <br/> 功能描述:{@link RegisterModel}的实现方法
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/23
+ */
+public interface RegisterModelImp extends BaseModel {
+}

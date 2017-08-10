@@ -1,0 +1,737 @@
+package com.haoeyou.user.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.R;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.bean.AddHealthBean;
+import com.haoeyou.user.bean.ArchivesInfoRequestBean;
+import com.haoeyou.user.bean.ArchivesInfoResponseBean;
+import com.haoeyou.user.bean.Doc;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.entity.PickerListener;
+import com.haoeyou.user.fragment.FourthFragment;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.mvp.presenter.FillArchivesPresenter;
+import com.haoeyou.user.mvp.view.FillArchivesView;
+import com.haoeyou.user.utils.DataUtils;
+import com.haoeyou.user.utils.PickerUtils;
+import com.haoeyou.user.utils.ToastUtils;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class FillArchivesActivity extends BaseActivity implements FillArchivesView {
+    public final static String TAG = "FillArchivesActivity";
+    public final static String TYPE = "TYPE";
+    public final static String CHANGE = "CHANGE";
+    public final static String ADD = "ADD";
+    @Bind(R.id.height)
+    EditText mHeight;
+    @Bind(R.id.weight)
+    EditText mWeight;
+    @Bind(R.id.blod_type)
+    TextView mBloodType;
+    private Context mContext;
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.more)
+    TextView mMore;
+    @Bind(R.id.image_more)
+    ImageView mImageMore;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    @Bind(R.id.name)
+    EditText mName;
+    @Bind(R.id.sex)
+    TextView mSex;
+    @Bind(R.id.birthday)
+    TextView mBirthday;
+    @Bind(R.id.old)
+    TextView mOld;
+    @Bind(R.id.tel)
+    EditText mTel;
+    @Bind(R.id.urgent_phone)
+    EditText mUrgentPhone;
+    @Bind(R.id.area)
+    TextView mArea;
+    @Bind(R.id.is_exercise)
+    TextView mIsExercise;
+    @Bind(R.id.is_smoking)
+    TextView mIsSmoking;
+    @Bind(R.id.is_drinking)
+    TextView mIsDrinking;
+    @Bind(R.id.genetic_history)
+    TextView mGeneticHistory;
+    @Bind(R.id.allergy)
+    TextView mAllergy;
+    @Bind(R.id.department)
+    TextView mDepartment;
+    @Bind(R.id.normal_btn)
+    Button mNormalBtn;
+    @Bind(R.id.button_layout)
+    LinearLayout mButtonLayout;
+
+    private PickerUtils mPicker;
+    private String businessType;
+    private boolean nameFlag = false;
+    private boolean sexFlag = false;
+    private boolean birthdayFlag = false;
+    private boolean oldFlag = false;
+    private boolean telFlag = false;
+    private boolean urgentPhoneFlag = false;
+    private boolean areaFlag = false;
+    private boolean exerciseFlag = false;
+    private boolean drinkFlag = false;
+    private boolean smokingFlag = false;
+    private boolean geneticHistoryFlag = false;
+    private boolean allergyFlag = false;
+    private boolean departFlag = false;
+    private boolean bloodTypeFlag = false;
+    private boolean heightFlag = false;
+    private boolean weightFlag = false;
+    private String DocNum = "";
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_fill_archives;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = this;
+        ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void initEventAndData() {
+        mTitleTv.setText("基本资料");
+        mMore.setText("完成");
+        mNormalBtn.setVisibility(View.INVISIBLE);
+        mPicker = new PickerUtils(mContext);
+        businessType = (String) getIntent().getExtras().get(FillArchivesActivity.TYPE);
+        mMore.setTextColor(Color.parseColor("#F1F1F1"));
+        initTextWatcher();
+        if (businessType.equals(FillArchivesActivity.CHANGE)) {
+            DocNum = (String) getIntent().getExtras().get("DOC_NUM");
+            //TODO 请求数据显示
+            String jsonBean = new Gson().toJson(new ArchivesInfoRequestBean(Common.ACCOUNT, DocNum, Common.TOKEN));
+            ((FillArchivesPresenter) mPresenter).getArchivesInfo(mContext, jsonBean);
+        } else if (businessType.equals(FillArchivesActivity.ADD)) {
+
+        }
+    }
+
+
+    @Override
+    public BasePresenter getPresenter() {
+        return new FillArchivesPresenter();
+    }
+
+    @OnClick({R.id.title_back, R.id.more, R.id.sex, R.id.birthday, R.id.area, R.id.blod_type, R.id.is_exercise, R.id
+            .is_smoking, R.id.is_drinking, R.id.genetic_history, R.id.allergy, R.id.department, R.id.normal_btn})
+    public void onViewClicked(View view) {
+        closeInputBroad();
+        switch (view.getId()) {
+            case R.id.title_back:
+                finish();
+                break;
+            case R.id.more:
+                upload();
+                break;
+            case R.id.sex:
+                showSexPicker();
+                break;
+            case R.id.birthday:
+                showBirthdayPicker();
+                break;
+            case R.id.area:
+                showAreaPicker();
+                break;
+            case R.id.blod_type:
+                showBloodPicker();
+                break;
+            case R.id.is_exercise:
+                showWhetherPicker(mIsExercise);
+                break;
+            case R.id.is_smoking:
+                showWhetherPicker(mIsSmoking);
+                break;
+            case R.id.is_drinking:
+                showWhetherPicker(mIsDrinking);
+                break;
+            case R.id.genetic_history:
+                gotoEditInfo(FourthFragment.TAG, mGeneticHistory.getText().toString(), 100, EditInfoActivity.class);
+                break;
+            case R.id.allergy://过敏
+                gotoEditInfo(FourthFragment.TAG, mAllergy.getText().toString(), 101, EditInfoActivity.class);
+                break;
+            case R.id.department:
+                gotoEditInfo(FillingActivity.TAG, "", 102, CareDepartmentActivity.class);
+                break;
+        }
+    }
+
+    private void upload() {
+        AddHealthBean addBean = new AddHealthBean(Common.TOKEN, new Doc(mOld.getText().toString(), mAllergy.getText()
+                .toString(), mBloodType.getText().toString(), mBirthday.getText().toString(), mArea.getText()
+                .toString(), mUrgentPhone.getText().toString(), (mDepartment.getText().toString()).split("," + "" + 
+                "" + "" + "" + ""), DocNum, mGeneticHistory.getText().toString(), mHeight.getText().toString(), 
+                mIsDrinking.getText().toString(), mIsExercise.getText().toString(), mIsSmoking.getText().toString(), 
+                mName.getText().toString(), mSex.getText().toString(), mTel.getText().toString(), mWeight.getText()
+                .toString()));
+        //新增 
+        String jsonBean = new Gson().toJson(addBean);
+        if (businessType.equals(FillArchivesActivity.ADD)) {
+            ((FillArchivesPresenter) mPresenter).createNewArchives(mContext, jsonBean);
+        } //修改
+        else if (businessType.equals(FillArchivesActivity.CHANGE)) {
+            jsonBean = jsonBean.replace("doc", "newDoc");
+            jsonBean = jsonBean.replace("newDocNumber", "docNumber");
+            ((FillArchivesPresenter) mPresenter).changeArchives(mContext, jsonBean);
+        }
+    }
+
+    private void initTextWatcher() {
+        mName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mName.getText())) {
+                    nameFlag = false;
+                } else {
+                    nameFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mSex.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mSex.getText())) {
+                    sexFlag = false;
+                } else {
+                    sexFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mBirthday.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mBirthday.getText())) {
+                    birthdayFlag = false;
+                } else {
+                    birthdayFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mOld.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mOld.getText())) {
+                    oldFlag = false;
+                } else {
+                    oldFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mTel.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mTel.getText())) {
+                    telFlag = false;
+                } else {
+                    telFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mUrgentPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mUrgentPhone.getText())) {
+                    urgentPhoneFlag = false;
+                } else {
+                    urgentPhoneFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mArea.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mArea.getText())) {
+                    areaFlag = false;
+                } else {
+                    areaFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mHeight.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mHeight.getText())) {
+                    heightFlag = false;
+                } else {
+                    heightFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mWeight.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mWeight.getText())) {
+                    weightFlag = false;
+                } else {
+                    weightFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mBloodType.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mBloodType.getText())) {
+                    bloodTypeFlag = false;
+                } else {
+                    bloodTypeFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mIsExercise.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mIsExercise.getText())) {
+                    exerciseFlag = false;
+                } else {
+                    exerciseFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mIsSmoking.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mIsSmoking.getText())) {
+                    smokingFlag = false;
+                } else {
+                    smokingFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mIsDrinking.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mIsDrinking.getText())) {
+                    drinkFlag = false;
+                } else {
+                    drinkFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mGeneticHistory.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mGeneticHistory.getText())) {
+                    geneticHistoryFlag = false;
+                } else {
+                    geneticHistoryFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mAllergy.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mAllergy.getText())) {
+                    allergyFlag = false;
+                } else {
+                    allergyFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+        mDepartment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(mDepartment.getText())) {
+                    departFlag = false;
+                } else {
+                    departFlag = true;
+                    checkIsCanRegister();
+                }
+            }
+        });
+    }
+
+    /**
+     * <br/> 方法名称: checkIsCanRegister
+     * <br/> 方法详述: 判断是否可以点击
+     */
+    private void checkIsCanRegister() {
+        if (nameFlag && sexFlag && birthdayFlag && oldFlag && telFlag && urgentPhoneFlag && areaFlag && heightFlag &&
+                weightFlag && bloodTypeFlag && exerciseFlag && smokingFlag && drinkFlag && geneticHistoryFlag && 
+                allergyFlag && departFlag) {
+            mMore.setTextColor(Color.parseColor("#3eb0ff"));
+            mMore.setClickable(true);
+        } else {
+            mMore.setTextColor(Color.parseColor("#F1F1F1"));
+            mMore.setClickable(false);
+        }
+    }
+
+    private void showSexPicker() {
+        mPicker.buildSexPicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                mSex.setText(data);
+            }
+        });
+    }
+
+    private void showWhetherPicker(final TextView edit) {
+        mPicker.buildWhetherPicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                edit.setText(data);
+            }
+        });
+    }
+
+    private void showBirthdayPicker() {
+        mPicker.buildBirthdayPicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                mBirthday.setText(data);
+                mOld.setText(DataUtils.getBirthday(data));
+            }
+        });
+    }
+
+    private void showAreaPicker() {
+        mPicker.buildAreaPicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                mArea.setText(data);
+            }
+        });
+    }
+
+    private void showBloodPicker() {
+        mPicker.buildBloodTypePicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                mBloodType.setText(data);
+            }
+        });
+    }
+
+
+    private void gotoEditInfo(String from, String info, int requestCode, Class<?> cls) {
+        Intent itt = new Intent(FillArchivesActivity.this, cls);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        bundle.putString("PRE_INFO", info);
+        itt.putExtras(bundle);
+        startActivityForResult(itt, requestCode);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String info;
+        if (1 == resultCode) {
+            if (100 == requestCode) {
+                info = data.getExtras().get("INFO").toString();
+                mGeneticHistory.setText(info);
+                if (TextUtils.isEmpty(info)) {
+                    geneticHistoryFlag = false;
+                }
+            } else if (101 == requestCode) {
+                info = data.getExtras().get("INFO").toString();
+                mAllergy.setText(info);
+                if (TextUtils.isEmpty(info)) {
+                    allergyFlag = false;
+                }
+            } else if (102 == requestCode) {
+                info = data.getExtras().get("DEPART").toString();
+                mDepartment.setText(info);
+                if (TextUtils.isEmpty(info)) {
+                    departFlag = false;
+                }
+            }
+            checkIsCanRegister();
+        }
+    }
+
+    /**
+     * <br/> 方法名称: closeInputBroad
+     * <br/> 方法详述: 关闭软键盘
+     */
+    private void closeInputBroad() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mName.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(mTel.getWindowToken(), 0);
+    }
+
+    @Override
+    public void showLoadProgressDialog(String str) {
+
+    }
+
+    @Override
+    public void disDialog() {
+
+    }
+
+    @Override
+    public void setInfo(ArchivesInfoResponseBean bean) {
+        Doc docInfo = bean.getDoc();
+        mName.setText(docInfo.getName());
+        mSex.setText(docInfo.getSex());
+        mBirthday.setText(docInfo.getBorthDay());
+        if (TextUtils.isEmpty(docInfo.getAge()) && !TextUtils.isEmpty(docInfo.getBorthDay())) {
+            mOld.setText(DataUtils.getBirthday(docInfo.getBorthDay()));
+        } else {
+            mOld.setText(docInfo.getAge());
+        }
+        mTel.setText(docInfo.getTel());
+        mUrgentPhone.setText(docInfo.getContactTel());
+        mArea.setText(docInfo.getCity());
+        mHeight.setText(docInfo.getHeight());
+        mWeight.setText(docInfo.getWeight());
+        mBloodType.setText(docInfo.getBloodType());
+        mIsExercise.setText(docInfo.getIsExcercise());
+        mIsSmoking.setText(docInfo.getIsSmoke());
+        mIsDrinking.setText(docInfo.getIsDrink());
+        mGeneticHistory.setText(docInfo.getGeneticHistory());
+        mAllergy.setText(docInfo.getAllergyHistory());
+        StringBuffer buffer = new StringBuffer();
+        if (docInfo.getDepartmentList() != null) {
+            for (String s : docInfo.getDepartmentList()) {
+                buffer.append(s + ",");
+            }
+        }
+        mDepartment.setText(buffer.toString());
+    }
+
+    @Override
+    public void changeSuccess() {
+        showToast("档案修改成功");
+        if (WebPageActivity.TAG.equals(getIntent().getExtras().get(Common.FROM))) {
+            ServiceOrderActivity.startAction(mContext,FillArchivesActivity.TAG);
+        }
+        finish();
+    }
+
+    @Override
+    public void changeFailed(String message) {
+        showBaseMessageDialog(message);
+    }
+
+    @Override
+    public void addSuccess() {
+        showToast("添加成功");
+        finish();
+    }
+
+    /**
+     * @param ct   上下文
+     * @param from 从哪儿跳来的
+     */
+    public static void startAction(Context ct, String from, String docNum, String Type) {
+        Intent itt = new Intent(ct, FillArchivesActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        bundle.putString(FillArchivesActivity.TYPE, Type);
+        bundle.putString("DOC_NUM", docNum);
+        itt.putExtras(bundle);
+        ct.startActivity(itt);
+    }
+
+}

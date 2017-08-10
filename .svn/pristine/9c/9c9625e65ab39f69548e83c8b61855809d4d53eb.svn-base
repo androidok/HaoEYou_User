@@ -1,0 +1,123 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply from: 'tinkerpatch.gradle'
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
+    defaultConfig {
+        applicationId "com.haoeyou.user"
+        minSdkVersion 17
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi-v7a'//'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
+    }
+    //需要配置自己的签名
+    signingConfigs {
+        release {
+            try {
+                keyAlias 'keystore'
+                keyPassword 'haoeyou123'
+                storeFile file('keystore.jks')
+                storePassword 'haoeyou123'
+            }
+            catch (ex) {
+                //throw new Exception("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties")
+            }
+        }
+    }
+    buildTypes {
+//        debug {
+//            minifyEnabled false
+//            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+    //环信集成,必须添加
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    //分包设置大小
+    dexOptions {
+//        incremental true
+        jumboMode = true
+        javaMaxHeapSize "4g"
+    }
+    //[MissingTranslation]:打包的时候不需要检查String文件中是否有翻译
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    //引入网络框架
+    compile project(':okhttputils')
+    //toolbar框架
+    compile project(':statusbarlibrary')
+    //二级展开菜单
+    compile project(path: ':groupedadapter')
+    //环信的ui组件
+    compile project(':easeui')
+    //butterknife框架
+    compile 'com.jakewharton:butterknife:7.0.1'
+    //glide图片框架
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    //轮播框架
+    compile 'com.youth.banner:banner:1.4.9'
+    //权限请求框架
+    compile 'com.zhy:mpermission-api:1.0.0'
+    apt 'com.zhy:mpermission-compiler:1.0.0'
+    //选择器
+    compile 'com.contrarywind:Android-PickerView:3.2.5'
+    //gson包
+    compile 'com.google.code.gson:gson:2.8.0'
+    //图片选择地址 https://github.com/LuckSiege/PictureSelector
+    compile 'com.github.LuckSiege.PictureSelector:picture_library:v1.5.7'
+    //compile 'com.thefinestartist:finestwebview:1.2.7'
+    //分包
+    compile 'com.android.support:multidex:1.0.1'
+    //ormlite框架
+    compile 'com.j256.ormlite:ormlite-android:5.0'
+    //parse
+    compile 'com.parse:parse-android:1.15.7'
+    //eventBus
+    compile 'org.greenrobot:eventbus:3.0.0'
+    //以下两个是腾讯gugly云端集成
+    //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    compile 'com.tencent.bugly:crashreport:latest.release'
+    //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+    compile 'com.tencent.bugly:nativecrashreport:latest.release'
+    //以上两个是腾讯gugly云端集成
+    //加载动画集成 http://ybq.github.io/Android-SpinKit/
+    compile 'com.github.ybq:Android-SpinKit:1.0.5'
+    //tinker的核心库
+    compile("com.tinkerpatch.sdk:tinkerpatch-android-sdk:1.1.4")
+    // 若使用annotation需要单独引用,对于tinker的其他库都无需再引用
+    provided("com.tencent.tinker:tinker-android-anno:1.7.7")
+}
+    

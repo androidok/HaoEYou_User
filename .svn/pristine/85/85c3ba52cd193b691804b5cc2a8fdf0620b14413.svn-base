@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_home"
+        style="@style/viewpager_navigation_bar_tab_style"
+        android:drawableTop="@drawable/home_page_select"
+        android:text="首页"/>
+
+    <TextView
+        android:id="@+id/tv_location"
+        style="@style/viewpager_navigation_bar_tab_style"
+        android:drawableTop="@drawable/doctor_unselect"
+        android:text="医生"/>
+
+    <TextView
+        android:id="@+id/tv_like"
+        style="@style/viewpager_navigation_bar_tab_style"
+        android:drawableTop="@drawable/message_nuselect"
+        android:text="信息"/>
+
+    <TextView
+        android:id="@+id/tv_person"
+        style="@style/viewpager_navigation_bar_tab_style"
+        android:drawableTop="@drawable/baogao_unselect"
+        android:text="报告"/>
+</LinearLayout>

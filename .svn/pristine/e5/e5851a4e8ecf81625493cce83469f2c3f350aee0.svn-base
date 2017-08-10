@@ -1,0 +1,97 @@
+package com.haoeyou.user.fragment;
+
+import android.content.Context;
+import android.graphics.Rect;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.ConsultationDetailsActivity;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.FinishHolder;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.utils.ButtonTools;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+
+/**
+ * Created by Mou on 2017/6/21.
+ */
+
+public class FinishFragment extends BaseFragment {
+    public final static String TAG = "UnFinishFragment";
+    @Bind(R.id.infor_recycle)
+    RecyclerView mInfoRecycle;
+    private Context mContext;
+    private BaseRecyclerAdapter mAdapter;
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.layout_finish;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+    }
+
+    @Override
+    protected void initEventAndData() {
+
+    }
+
+    @Override
+    protected void lazyLoadData() {
+        initRecycleView();
+    }
+
+    public void initRecycleView() {
+        LinearLayoutManager mgr = new LinearLayoutManager(mContext);
+        mgr.setOrientation(LinearLayoutManager.VERTICAL);
+        mInfoRecycle.setLayoutManager(mgr);
+        mInfoRecycle.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.bottom = 20;
+            }
+        });
+        setAdapter();
+    }
+
+    public void setAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        if (mInfoRecycle == null)
+            return;
+        if (mAdapter == null) {
+            mAdapter = new BaseRecyclerAdapter(mContext, list, R.layout.adapter_finish_item, FinishHolder.class, new 
+                    ItemListener() {
+                @Override
+                public void onItemClick(View view, int position, Object mData) {
+                    ButtonTools.disabledView(view, 1);
+                    ConsultationDetailsActivity.startAction(mContext, FinishFragment.TAG);
+                }
+            });
+            mInfoRecycle.setAdapter(mAdapter);
+        } else {
+            if ((mAdapter.getItem(0) == null) && (list.size() == 0))
+                return;
+            if ((mAdapter.getItem(0) == null) || (list.size() == 0))
+                mAdapter.setmDatas(list);
+        }
+    }
+}

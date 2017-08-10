@@ -1,0 +1,22 @@
+package com.haoeyou.user.mvp.presenter;
+
+
+import android.content.Context;
+
+import com.haoeyou.user.mvp.view.BaseView;
+
+public abstract class BasePresenter<T extends BaseView> {
+    public T mView;
+
+    public void attach(T mView) {
+        this.mView = mView;
+    }
+
+    public void detachView() {
+        if (mView != null) {
+            mView = null;
+        }
+    }
+
+
+}

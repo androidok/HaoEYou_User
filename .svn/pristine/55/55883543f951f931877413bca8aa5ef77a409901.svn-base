@@ -1,0 +1,90 @@
+package com.haoeyou.user.mvp.model;
+
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.bean.AlterRequestBean;
+import com.haoeyou.user.bean.BasicResponseBean;
+import com.haoeyou.user.bean.SocialDocResponseBean;
+import com.haoeyou.user.bean.UploadResponseBean;
+import com.haoeyou.user.cache.UserCacheManager;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.event.MVPCallBack;
+import com.haoeyou.user.network.DataCallback;
+import com.haoeyou.user.network.NetWorking;
+import com.haoeyou.user.utils.JsonFormat;
+import com.haoeyou.user.utils.SharedPreferencesHelper;
+
+import okhttp3.Call;
+
+/**
+ * Created by Mou on 2017/6/26.
+ */
+
+public class MainModel implements MainModelImp {
+    @Override
+    public void uploadFile(final Context mContext, String jsonBean, final MVPCallBack<Object> mBack) {
+        NetWorking.requestNetData("fileStorage/upload", jsonBean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("upload", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("提交文件", JsonFormat.format(response));
+                UploadResponseBean bean = new Gson().fromJson(response, UploadResponseBean.class);
+                if ("1".equals(bean.getErrorCode())) {
+                    //文件提交成功后,把文件ID保存到本地,
+                    Common.FILE_ID = bean.getFileID();
+                    SharedPreferencesHelper.putString(mContext, "FILE_ID", bean.getFileID());
+                    alterHeadFile(bean.getFileID(), mBack);
+                }
+            }
+        });
+    }
+
+    private void alterHeadFile(final String fileID, final MVPCallBack<Object> mBack) {
+        AlterRequestBean bean = new AlterRequestBean(fileID, Common.NIKE_NAME, Common.TOKEN);
+        String jsonBean = new Gson().toJson(bean);
+        NetWorking.requestNetData("chat/alterSocialDoc", jsonBean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("修改头像", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("修改头像", JsonFormat.format(response));
+                BasicResponseBean bean = new Gson().fromJson(response, BasicResponseBean.class);
+                if ("1".equals(bean.getErrorCode())) {
+                    
+                    UserCacheManager.save(Common.ACCOUNT, Common.NIKE_NAME, Common.BASE_URL + 
+                            "fileStorage/download?id=" + fileID + "&token=" + Common.TOKEN);
+                    mBack.succeed("");
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void alterNickName(Context mContext, String jsonBean, final MVPCallBack mBack) {
+        NetWorking.requestNetData("chat/alterSocialDoc", jsonBean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("修改昵称", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("修改昵称", JsonFormat.format(response));
+                BasicResponseBean bean = new Gson().fromJson(response, BasicResponseBean.class);
+                if ("1".equals(bean.getErrorCode())) {
+                  mBack.succeed("");
+                }
+            }
+        });
+    }
+}

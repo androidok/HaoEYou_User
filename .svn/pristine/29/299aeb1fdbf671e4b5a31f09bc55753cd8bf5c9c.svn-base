@@ -1,0 +1,70 @@
+package com.haoeyou.user.adapter;
+
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.FillArchivesActivity;
+import com.haoeyou.user.activity.ReportActivity;
+import com.haoeyou.user.fragment.FourthFragment;
+
+import butterknife.Bind;
+import butterknife.OnClick;
+
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class RrchivesListHolder extends BaseHolder<String> {
+
+    @Bind(R.id.name)
+    TextView mName;
+    @Bind(R.id.health)
+    TextView mHealth;
+    @Bind(R.id.history)
+    TextView mHistory;
+    @Bind(R.id.bl_red)
+    View mBlRed;
+    @Bind(R.id.bl_report)
+    LinearLayout mBlReport;
+    @Bind(R.id.hz_red)
+    View mHzRed;
+    @Bind(R.id.hz_report)
+    LinearLayout mHzReport;
+
+    public RrchivesListHolder(View view) {
+        super(view);
+    }
+
+    @Override
+    public void setData(String mData) {
+        super.setData(mData);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+
+    @OnClick({R.id.health, R.id.history, R.id.bl_report, R.id.hz_report})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.health:
+                FillArchivesActivity.startAction(mContext, FourthFragment.TAG);
+                break;
+            case R.id.history:
+                break;
+            case R.id.bl_report:
+            case R.id.hz_report:
+                ReportActivity.startAction(mContext, FourthFragment.TAG);
+                break;
+        }
+    }
+}

@@ -1,0 +1,102 @@
+package com.haoeyou.user.fragment;
+
+import android.content.Context;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.NewsListHolder;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+
+/**
+ * ViewPager页面
+ * Created by zhuwentao on 2016-08-22.
+ */
+public class SelfNewsFragment extends BaseFragment {
+    private Context mContext;
+
+    @Bind(R.id.infor_recycle)
+    RecyclerView mInfoRecycle;
+
+    /**
+     * 状态类型常量
+     */
+    public static final String STATUS_TYPE = "pagerType";
+
+    public static final String STATUS_ONE = "One";
+
+    public static final String STATUS_TWO = "Two";
+
+    public static final String STATUS_THREE = "Three";
+    private BaseRecyclerAdapter mAdapter;
+    
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_self_news;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+
+    }
+
+    @Override
+    protected void initEventAndData() {
+        initRecycleView();
+    }
+
+    @Override
+    protected void lazyLoadData() {
+        initRecycleView();
+    }
+
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    public void initRecycleView() {
+        LinearLayoutManager mgr = new LinearLayoutManager(mContext);
+        mgr.setOrientation(LinearLayoutManager.VERTICAL);
+        mInfoRecycle.setLayoutManager(mgr);
+        mInfoRecycle.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
+        setAdapter();
+    }
+
+    public void setAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            list.add("1");
+        }
+        if (mInfoRecycle == null)
+            return;
+        if (mAdapter == null) {
+            mAdapter = new BaseRecyclerAdapter(list, R.layout.adapter_news_item, NewsListHolder.class, new 
+                    ItemListener() {
+                @Override
+                public void onItemClick(View view, int position, Object mData) {
+                    //NewsActivity.startAction(mContext, NewsGroupActivity.TAG);
+                    //getActivity().layout_finish();
+                }
+            });
+            mInfoRecycle.setAdapter(mAdapter);
+        } else {
+            if ((mAdapter.getItem(0) == null) && (list.size() == 0))
+                return;
+            if ((mAdapter.getItem(0) == null) || (list.size() == 0))
+                mAdapter.setmDatas(list);
+        }
+    }
+
+}

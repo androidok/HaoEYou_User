@@ -1,0 +1,52 @@
+package com.haoeyou.user.adapter;
+
+import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.haoeyou.user.R;
+
+import butterknife.Bind;
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class NewsListHolder extends BaseHolder<String> {
+    private Context mContext;
+    @Bind(R.id.title)
+    TextView mTitle;
+    @Bind(R.id.time)
+    TextView mTime;
+    @Bind(R.id.shortmessage)
+    TextView mMessage;
+    @Bind(R.id.pic)
+    ImageView mPic;
+
+
+    public NewsListHolder(View view) {
+        super(view);
+        mContext = view.getContext();
+    }
+
+    @Override
+    public void setData(String mData) {
+        super.setData(mData);
+        String path = "http://haoeyouwebsite.oss-cn-shanghai.aliyuncs.com/201705/22/20170522761524.jpg";
+        Glide.with(mContext).load(path).placeholder(R.drawable.news_item)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT).into(mPic);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+}

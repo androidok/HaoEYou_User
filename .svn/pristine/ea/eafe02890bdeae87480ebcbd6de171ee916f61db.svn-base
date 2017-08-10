@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="48dp"
+              android:layout_marginBottom="1px"
+              android:background="#fbfcfe"
+              android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:layout_height="0dp">
+        
+
+        <TextView
+            android:id="@+id/tv_child"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"/>
+
+        <com.haoeyou.user.widget.smoothcheck.SmoothCheckBox
+            android:id="@+id/child_box"
+            android:layout_width="20dp"
+            android:clickable="false"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            app:color_checked="#149A45"
+            app:stroke_width="20dp"/>
+        <View
+            android:layout_width="10dp"
+            android:layout_height="0.5dp"
+            android:background="#d6e2f5"
+            android:visibility="invisible"
+            />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/child_line"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="20dp"
+        android:background="#d6e2f5"
+        />
+</LinearLayout>

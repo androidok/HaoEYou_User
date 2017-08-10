@@ -1,0 +1,69 @@
+package com.haoeyou.user.mvp.model;
+
+
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.bean.LoginResponse;
+import com.haoeyou.user.cache.UserCacheManager;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.event.MVPCallBack;
+import com.haoeyou.user.network.DataCallback;
+import com.haoeyou.user.network.NetWorking;
+import com.haoeyou.user.utils.SharedPreferencesHelper;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import okhttp3.Call;
+
+public class LoginModel implements LoginModelImp {
+
+    @Override
+    public void login(final Context mContext, String jsonBean, final MVPCallBack<String> mBack) {
+        NetWorking.requestNetData("authorization/createToken", jsonBean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("account/accountLogin", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("createToken", response);
+                final LoginResponse bean = new Gson().fromJson(response, LoginResponse.class);
+                if ("1".equals(bean.getErrorCode())) {
+                    Common.TOKEN = bean.getToken();
+                    SharedPreferencesHelper.putString(mContext, "TOKEN", bean.getToken());
+                    
+                    //TODO 环信登录 
+                    EMClient.getInstance().login("18613009128", "123456", new EMCallBack() {
+                        @Override
+                        public void onSuccess() {
+                            mBack.succeed(bean.getErrorMsg());
+                        }
+
+                        @Override
+                        public void onError(int i, String s) {
+                            Log.e("ONE", "用户登录失败," + i + "," + s);
+                        }
+
+                        @Override
+                        public void onProgress(int i, String s) {
+
+                        }
+                    });
+                    //TODO 头像保存
+//                    UserCacheManager.save(userId, nickName, avatarUrl);
+
+                } else {
+                    mBack.failed(bean.getErrorMsg());
+                }
+
+            }
+        });
+    }
+}

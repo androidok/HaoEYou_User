@@ -1,0 +1,8 @@
+package com.haoeyou.user.mvp.view;
+
+/**
+ * Created by Mou on 2017/5/22.
+ */
+
+public interface MainFragmentView extends BaseView {
+}

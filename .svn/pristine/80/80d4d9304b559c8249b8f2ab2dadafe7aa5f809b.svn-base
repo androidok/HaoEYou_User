@@ -1,0 +1,199 @@
+package com.haoeyou.user.fragment;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.LoginActivity;
+import com.haoeyou.user.activity.MainActivity;
+import com.haoeyou.user.activity.WebPageActivity;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.InfoListHolder;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.common.AppManager;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.mvp.view.MainFragmentView;
+import com.haoeyou.user.utils.ScreenUtil;
+import com.thefinestartist.finestwebview.FinestWebView;
+import com.youth.banner.Banner;
+import com.youth.banner.listener.OnBannerListener;
+import com.youth.banner.loader.ImageLoader;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+/**
+ * 类名: {@link MainFragment}
+ * <br/> 功能描述:
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/18
+ * <br/> 最后修改者:
+ * <br/> 最后修改内容:
+ */
+public class MainFragment extends BaseFragment implements MainFragmentView, ItemListener<String> {
+    @Bind(R.id.banner)
+    Banner mBanner;
+    @Bind(R.id.first_layout)
+    LinearLayout mFirst;
+    @Bind(R.id.second_layout)
+    LinearLayout mSecond;
+    @Bind(R.id.third_layout)
+    LinearLayout mThird;
+    @Bind(R.id.fourth_layout)
+    LinearLayout mFourth;
+    @Bind(R.id.infor_recycle)
+    RecyclerView mInfoRecycle;
+
+    private Context mContext;
+    private List<String> images = new ArrayList<String>();
+    private BaseRecyclerAdapter mAdapter;
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    @Override
+    protected int getlayoutId() {
+        return R.layout.fragment_main;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        initBanner();
+        initRecycleView();
+    }
+
+    /**
+     * 初始化banner
+     */
+    private void initBanner() {
+        images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1495445080543&di" + 
+                "=2128f43d4ee53dcb7dbec5e1abeecc81&imgtype=0&src=http%3A%2F%2Fs1.51cto" + "" + "" + "" + "" + "" + ""
+                + ".com%2Fwyfs02%2FM02%2F94%2FF5%2FwKioL1kQLNfDwYYoAAEZPLWQ7RI073.png");
+        images.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1495445080542&di" + 
+                "=14d4ddbf02680acdc2cd2ecd5fb57108&imgtype=0&src=http%3A%2F%2Fwww" + "" + "" + "" + "" + "" + "" + ""
+                + ".th7.cn%2Fd%2Ffile%2Fp%2F2015%2F09%2F08%2Fed8042100888d5e2c2ec2bc607aa1841.jpg");
+        //设置图片加载器
+        mBanner.setImageLoader(new ImageLoader() {
+            @Override
+            public void displayImage(Context context, Object o, ImageView imageView) {
+                Glide.with(mContext).load((String) o).centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT)/*
+                .override(ScreenUtil
+                        .getScreenWidth(mContext), 150)*/.into(imageView);
+            }
+        });
+        //设置图片集合
+        mBanner.setImages(images);
+        //设置点击事件监听
+        mBanner.setOnBannerListener(new OnBannerListener() {
+            @Override
+            public void OnBannerClick(int i) {
+
+            }
+        });
+        //banner设置方法全部调用完毕时最后调用
+        mBanner.start();
+    }
+
+    public void initRecycleView() {
+        LinearLayoutManager mgr = new LinearLayoutManager(mContext);
+        mgr.setOrientation(LinearLayoutManager.VERTICAL);
+        mInfoRecycle.setLayoutManager(mgr);
+        mInfoRecycle.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
+        setAdapter();
+    }
+
+    public void setAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        if (mInfoRecycle == null)
+            return;
+        if (mAdapter == null) {
+            mAdapter = new BaseRecyclerAdapter(list, R.layout.adapter_info_item, InfoListHolder.class, this);
+            mInfoRecycle.setAdapter(mAdapter);
+        } else {
+            if ((mAdapter.getItem(0) == null) && (list.size() == 0))
+                return;
+            if ((mAdapter.getItem(0) == null) || (list.size() == 0))
+                mAdapter.setmDatas(list);
+        }
+    }
+
+    @Override
+    protected void lazyLoadData() {
+
+    }
+
+    @Override
+    public void onItemClick(View view, int postion, String mdata) {
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBanner.stopAutoPlay();
+        ButterKnife.unbind(this);
+    }
+
+    @OnClick({R.id.first_layout, R.id.second_layout, R.id.third_layout, R.id.fourth_layout})
+    public void onViewClicked(View view) {
+        if (Common.IS_FIRST_LOAD) {
+            LoginActivity.startAction(mContext, MainActivity.TAG);
+            getActivity().finish();
+            return;
+        }
+        String path = "http://www.haoeyou.com/our-services/#";
+        switch (view.getId()) {
+            case R.id.first_layout:
+                WebPageActivity.startAction(mContext, MainActivity.TAG, path + "remote", "远程咨询");
+                break;
+            case R.id.second_layout:
+                WebPageActivity.startAction(mContext, MainActivity.TAG, path + "usmedical", "赴美就医");
+                break;
+            case R.id.third_layout:
+                WebPageActivity.startAction(mContext, MainActivity.TAG, path + "packages", "健康管理");
+                break;
+            case R.id.fourth_layout:
+                break;
+            default:
+
+                break;
+        }
+    }
+
+
+    @Override
+    public void showLoadProgressDialog(String str) {
+
+    }
+
+    @Override
+    public void disDialog() {
+
+    }
+}

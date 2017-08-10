@@ -1,0 +1,12 @@
+package com.haoeyou.user.mvp.presenter;
+
+import com.haoeyou.user.mvp.model.CareDepartmentModel;
+import com.haoeyou.user.mvp.view.CareDepartmentView;
+
+/**
+ * Created by Mou on 2017/5/24.
+ */
+
+public class CareDepartmentPresenter extends BasePresenter<CareDepartmentView> {
+    CareDepartmentModel mModel = new CareDepartmentModel();
+}

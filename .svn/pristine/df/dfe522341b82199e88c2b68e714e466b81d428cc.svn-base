@@ -1,0 +1,34 @@
+package com.haoeyou.user.mvp.model;
+
+
+import android.util.Log;
+
+import com.haoeyou.user.event.MVPCallBack;
+import com.haoeyou.user.network.DataCallback;
+import com.haoeyou.user.network.NetWorking;
+import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import okhttp3.Call;
+
+public class LoginModel implements LoginModelImp {
+    private static Map<String, String> mapData = null;
+
+    @Override
+    public void login(final MVPCallBack<String> mBack) {
+        NetWorking.requstNetData("login", "", "", "", new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("Error", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("response", response.toString());
+                mBack.succeed(response);
+            }
+        });
+    }
+}

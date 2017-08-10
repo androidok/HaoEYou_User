@@ -1,0 +1,65 @@
+package com.haoeyou.user.activity;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.content.Context;
+import android.text.TextUtils;
+
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.R;
+import com.haoeyou.user.common.Common;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class GuideAcitivity extends BaseActivity {
+    private final static String TAG = "GuideAcitivity";
+    private Context mContext;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_guide_acitivity;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = this;
+    }
+
+    @Override
+    protected void initEventAndData() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainActivity.startAction(mContext, TAG);
+                        finish();
+                    }
+                });
+
+            }
+        }, 3000);
+    }
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    /**
+     * @param ct   上下文
+     * @param from 从哪儿跳来的
+     */
+    public static void startAction(Context ct, String from) {
+        Intent itt = new Intent(ct, GuideAcitivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        itt.putExtras(bundle);
+        ct.startActivity(itt);
+    }
+}

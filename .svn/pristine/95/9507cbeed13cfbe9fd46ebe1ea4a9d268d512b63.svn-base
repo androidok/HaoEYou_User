@@ -1,0 +1,84 @@
+package com.haoeyou.user.adapter;
+
+import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.haoeyou.user.R;
+
+import butterknife.Bind;
+import butterknife.OnClick;
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class RecordHolder extends BaseHolder<String> {
+    @Bind(R.id.title)
+    TextView mTitle;
+    @Bind(R.id.date)
+    TextView mDate;
+    @Bind(R.id.see_detail)
+    ImageView mSeeDetail;
+    @Bind(R.id.pic_0)
+    ImageView mPic0;
+    @Bind(R.id.pic_1)
+    ImageView mPic1;
+    @Bind(R.id.pic_2)
+    ImageView mPic2;
+    @Bind(R.id.pic_3)
+    ImageView mPic3;
+    @Bind(R.id.image_layout)
+    LinearLayout mImageLayout;
+    private Context mContext;
+
+
+    public RecordHolder(View view) {
+        super(view);
+        mContext = view.getContext();
+    }
+
+    @Override
+    public void setData(/*int position, */String mData) {
+
+        super.setData(mData);
+        switch (getPosition()) {
+            case 0:
+                Glide.with(mContext).load(mData).centerCrop().diskCacheStrategy
+                        (DiskCacheStrategy.RESULT).override(90, 90).into(mPic0);
+                break;
+            case 1:
+                Glide.with(mContext).load(mData).centerCrop().diskCacheStrategy
+                        (DiskCacheStrategy.RESULT).override(90, 90).into(mPic1);
+                break;
+            case 2:
+                Glide.with(mContext).load(mData).centerCrop().diskCacheStrategy
+                        (DiskCacheStrategy.RESULT).override(90, 90).into(mPic2);
+                break;
+            case 3:
+                Glide.with(mContext).load(mData).centerCrop().diskCacheStrategy
+                        (DiskCacheStrategy.RESULT).override(90, 90).into(mPic3);
+                break;
+        }
+
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+
+    @OnClick({R.id.see_detail, R.id.image_layout})
+    public void onViewClicked(View view) {
+        listener.onItemClick(view, getPosition(), mData);
+    }
+}

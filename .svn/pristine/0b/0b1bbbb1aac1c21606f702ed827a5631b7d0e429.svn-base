@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BottomTabBar"><attr format="color" name="tab_bar_background"/><attr format="dimension" name="tab_img_width"/><attr format="dimension" name="tab_img_height"/><attr format="dimension" name="tab_font_size"/><attr format="dimension" name="tab_padding_top"/><attr format="dimension" name="tab_img_font_padding"/><attr format="dimension" name="tab_padding_bottom"/><attr format="boolean" name="tab_isshow_divider"/><attr format="dimension" name="tab_divider_height"/><attr format="color" name="tab_divider_background"/><attr format="color" name="tab_selected_color"/><attr format="color" name="tab_unselected_color"/></declare-styleable>
+    <string name="app_name">BottomTabBar</string>
+</resources>

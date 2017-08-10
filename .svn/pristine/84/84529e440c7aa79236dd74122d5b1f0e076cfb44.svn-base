@@ -1,0 +1,92 @@
+package com.haoeyou.user.activity.chat;
+
+import android.view.View;
+
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.easeui.ui.EaseChatFragment;
+import com.hyphenate.easeui.widget.chatrow.EaseCustomChatRowProvider;
+
+/**
+ * Created by Mou on 2017/6/13.
+ */
+
+public class BaseChatFragment extends EaseChatFragment {
+    @Override
+    protected void setUpView() {
+        super.setUpView();
+        setChatFragmentListener();
+    }
+
+    private void setChatFragmentListener() {
+        setChatFragmentHelper(new EaseChatFragmentHelper() {
+            /**
+             * 设置消息扩展属性
+             */
+            @Override
+            public void onSetMessageAttributes(EMMessage message) {
+
+            }
+
+            /**
+             * 进入会话详情
+             */
+            @Override
+            public void onEnterToChatDetails() {
+
+            }
+
+            /**
+             * 用户头像点击事件
+             * @param username
+             */
+            @Override
+            public void onAvatarClick(String username) {
+
+            }
+
+            /**
+             * 用户头像长按事件
+             */
+            @Override
+            public void onAvatarLongClick(String username) {
+
+            }
+
+            /**
+             * 消息气泡框点击事件
+             */
+            @Override
+            public boolean onMessageBubbleClick(EMMessage message) {
+                return false;
+            }
+
+            /**
+             * 消息气泡框长按事件
+             */
+            @Override
+            public void onMessageBubbleLongClick(EMMessage message) {
+
+            }
+
+            /**
+             * 扩展输入栏item点击事件,如果要覆盖EaseChatFragment已有的点击事件，return true
+             * @param view
+             * @param itemId
+             * @return
+             */
+            @Override
+            public boolean onExtendMenuItemClick(int itemId, View view) {
+                return false;
+            }
+
+            /**
+             * 设置自定义chatrow提供者
+             * @return
+             */
+            @Override
+            public EaseCustomChatRowProvider onSetCustomChatRowProvider() {
+                return null;
+            }
+        });
+    }
+}

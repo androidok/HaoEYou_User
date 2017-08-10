@@ -1,0 +1,145 @@
+package com.haoeyou.user.activity.menu;
+
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.fragment.MainFragment;
+import com.haoeyou.user.fragment.SecondFragment;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.hjm.bottomtabbar.BottomTabBar;
+
+import butterknife.Bind;
+
+public class ToolBarActivity extends BaseActivity {
+
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNagigationView;
+    private Toolbar mToolbar;
+    private Button mBtn;
+    @Bind(R.id.bottom_tab_bar)
+    BottomTabBar mBottomTabBar;
+
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_menu_with_toolbar;
+    }
+
+    @Override
+    protected void initInjector() {
+        initViews();
+        initToolBarConfig();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        initBottomBar();
+    }
+
+    /**
+     * 初始化底部导航栏
+     */
+    private void initBottomBar() {
+        mBottomTabBar.init(getSupportFragmentManager()).addTabItem("首页", R.drawable.home_page_select, MainFragment
+                .class).addTabItem("医生", R.drawable.doctor_unselect, SecondFragment.class).addTabItem("消息", R
+                .drawable.message_nuselect, SecondFragment.class).addTabItem("报告", R.drawable.baogao_unselect, 
+                SecondFragment.class);
+        mBottomTabBar.setOnTabChangeListener(new BottomTabBar.OnTabChangeListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onTabChange(int position, String name) {
+
+                changeIconResource(position);
+            }
+        });
+    }
+
+    private void changeIconResource(int position) {
+
+        switch (position) {
+            case 0:
+                mBottomTabBar.getTabList().get(0).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .home_page_select));
+                mBottomTabBar.getTabList().get(1).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .doctor_unselect));
+                mBottomTabBar.getTabList().get(2).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .message_nuselect));
+                mBottomTabBar.getTabList().get(3).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .baogao_unselect));
+                break;
+            case 1:
+                mBottomTabBar.getTabList().get(0).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .home_page_unselect));
+                mBottomTabBar.getTabList().get(1).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .doctor_select));
+                mBottomTabBar.getTabList().get(2).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .message_nuselect));
+                mBottomTabBar.getTabList().get(3).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .baogao_unselect));
+                break;
+            case 2:
+                mBottomTabBar.getTabList().get(0).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .home_page_unselect));
+                mBottomTabBar.getTabList().get(1).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .doctor_unselect));
+                mBottomTabBar.getTabList().get(2).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .message_select));
+                mBottomTabBar.getTabList().get(3).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .baogao_unselect));
+                break;
+            case 3:
+                mBottomTabBar.getTabList().get(0).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .home_page_unselect));
+                mBottomTabBar.getTabList().get(1).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .doctor_unselect));
+                mBottomTabBar.getTabList().get(2).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .message_nuselect));
+                mBottomTabBar.getTabList().get(3).getImag().setImageDrawable(getResources().getDrawable(R.drawable
+                        .baogao_select));
+                break;
+        }
+
+    }
+
+    /**
+     * 初始化ToolBar控件
+     */
+    private void initViews() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawerlayout);
+        mNagigationView = (NavigationView) findViewById(R.id.id_navigationview);
+        mNagigationView.inflateHeaderView(R.layout.header_nav);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mBtn = (Button) findViewById(R.id.goToActionBar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+        }
+        ActionBarDrawerToggle mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R
+                .string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mActionBarDrawerToggle.syncState();
+        mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
+        mBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ToolBarActivity.this, SimpleMenu.class));
+            }
+        });
+    }
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+}

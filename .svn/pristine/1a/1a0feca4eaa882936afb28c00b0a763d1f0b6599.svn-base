@@ -1,0 +1,46 @@
+package com.haoeyou.user.common;
+
+
+import android.content.Context;
+import android.os.Environment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.io.File;
+
+/**
+ * 类名: {@link Common}
+ * <br/> 功能描述: 存储全局数据的基本类
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/19
+ */
+public class Common {
+    /*是否为第一次登录*/
+    public static boolean IS_FIRST_LOAD = false;
+    /*用户登录时间*/
+    public static String START_TIME = "";
+    /*用户退出时间*/
+    public static String END_TIME = "";
+    /*用户TOKEN*/
+    public static String TOKEN = "";
+    public static String FROM = "";
+    private static LayoutInflater inflater;
+
+    public static View inflate(Context context, ViewGroup parent, int res) {
+        if (inflater == null) {
+            inflater = LayoutInflater.from(context);
+        }
+        return inflater.inflate(res, parent, false);
+
+    }
+
+    /**
+     * 手机存储路径
+     * Environment.getExternalStorageDirectory();
+     */
+    public static final String PHONE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File
+            .separator + "haoeyou" + File.separator;
+    /*读写权限*/
+    public static final int READ_EXTERNAL_STORAGE = 2;
+}

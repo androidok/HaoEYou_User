@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="picture_library-v1.5.7">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/dd131a574a73bec18c4d90b776be1057ecce5229/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/dd131a574a73bec18c4d90b776be1057ecce5229/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

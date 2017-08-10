@@ -1,0 +1,109 @@
+package com.haoeyou.user.activity.menu;
+
+import android.os.Build;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.fragment.MainFragment;
+import com.haoeyou.user.fragment.SecondFragment;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.hjm.bottomtabbar.BottomTabBar;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+import static com.haoeyou.user.R.id.drawer;
+
+public class SimpleMenu extends BaseActivity {
+
+    @Bind(R.id.contentLayout)
+    LinearLayout mContent;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolBar;
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(drawer)
+    DrawerLayout mDrawer;
+    @Bind(R.id.head)
+    ImageView mHead;
+    @Bind(R.id.bottom_tab_bar)
+    BottomTabBar mBottomTabBar;
+    private ActionBarDrawerToggle toggle;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_simple_menu;
+    }
+
+    @Override
+    protected void initInjector() {
+        ButterKnife.bind(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+        }
+    }
+
+    @Override
+    protected void initEventAndData() {
+        setDrawerLayoutListener();
+        mBottomTabBar.init(getSupportFragmentManager()).addTabItem("", R.mipmap.ic_launcher, MainFragment.class)
+                .addTabItem("", R.mipmap.ic_launcher, SecondFragment.class);
+    }
+
+    /**
+     * 侧滑菜单状态的监听,改变状态栏的颜色,同时改变主界面的位置
+     */
+    private void setDrawerLayoutListener() {
+        toggle = new ActionBarDrawerToggle(this, mDrawer, null, R.string.navigation_drawer_open, R.string
+                .navigation_drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View mDrawerView) {
+                super.onDrawerClosed(mDrawerView);
+                showToast("关闭");
+//                mStatusBarHelper.setColor(getResources().getColor(R.color.colorPrimary));
+//                mToolBar.setBackgroundColor(Color.parseColor("#3F51B5"));
+            }
+
+            @Override
+            public void onDrawerOpened(View mDrawerView) {
+                super.onDrawerOpened(mDrawerView);
+                showToast("打开");
+//                mStatusBarHelper.setColor(getResources().getColor(R.color.white));
+//                mToolBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            }
+
+            //动态设置主功能界面的位置,移动非覆盖
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                mContent.setX(slideOffset * drawerView.getWidth());
+            }
+        };
+        mDrawer.setDrawerListener(toggle);
+    }
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+
+    @OnClick(R.id.head)
+    public void onViewClicked() {
+
+    }
+
+}

@@ -1,0 +1,158 @@
+package com.haoeyou.user.widget.dialog;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.NameListHolder;
+import com.haoeyou.user.entity.PickerListener;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.utils.ScreenUtil;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Mou on 2017/6/20.
+ */
+
+public class IOSDialog {
+    private Context context;
+    private Dialog dialog;
+    private Display display;
+    private TextView mCareme;
+    private TextView mAlbum;
+    private TextView mCancle;
+    private View mOther;
+    private boolean isOutSide = true;
+
+    public IOSDialog(Context context) {
+        this.context = context;
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        display = windowManager.getDefaultDisplay();
+    }
+
+    public IOSDialog builder() {
+        // 加载布局  dialog
+        View view = LayoutInflater.from(context).inflate(R.layout.ios_dialog, null);
+        // 寻找控件
+        LinearLayout lLayout_bg = (LinearLayout) view.findViewById(R.id.lLayout_bg);
+        mCareme = (TextView) view.findViewById(R.id.camera);
+        mAlbum = (TextView) view.findViewById(R.id.album);
+        mCancle = (TextView) view.findViewById(R.id.cancel);
+        mOther = view.findViewById(R.id.other_view);
+        mOther.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isOutSide) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        // 设置为dialog
+        dialog = new Dialog(context, R.style.MyDialogStyle_top);
+        dialog.setContentView(view);
+
+        // 设置大小
+        lLayout_bg.setLayoutParams(new FrameLayout.LayoutParams(ScreenUtil.getScreenWidth(context), LinearLayout
+                .LayoutParams.WRAP_CONTENT));
+        return this;
+    }
+
+    /**
+     * 是否可以取消
+     */
+    public IOSDialog setCancelable(boolean cancel) {
+        this.isOutSide = cancel;
+        return this;
+    }
+
+    /**
+     * 初始化相机
+     */
+    public IOSDialog setCareme(String text, final View.OnClickListener listener) {
+        if (TextUtils.isEmpty(text)) {
+            mCareme.setText("取消");
+        } else {
+            mCareme.setText(text);
+        }
+        mCareme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClick(v);
+                dialog.dismiss();
+            }
+        });
+        return this;
+
+    }
+
+    /**
+     * 初始化相册
+     */
+    public IOSDialog setAlbum(String content, final View.OnClickListener listener) {
+        if (TextUtils.isEmpty(content)) {
+            mAlbum.setText("取消");
+        } else {
+            mAlbum.setText(content);
+        }
+        mAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClick(v);
+                dialog.dismiss();
+            }
+        });
+        return this;
+
+    }
+
+    /**
+     * 初始化取消按钮
+     */
+    public IOSDialog setCancle(String content, final View.OnClickListener listener) {
+        if (TextUtils.isEmpty(content)) {
+            mCancle.setText("取消");
+        } else {
+            mCancle.setText(content);
+        }
+        mCancle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClick(v);
+                dialog.dismiss();
+            }
+        });
+        return this;
+
+    }
+
+    public IOSDialog setDialogShowBottom() {
+        Window dialogWindow = dialog.getWindow();
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        //dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
+        lp.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        lp.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        lp.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+        dialogWindow.setAttributes(lp);
+        return this;
+    }
+
+
+    public void show() {
+        dialog.show();
+    }
+}

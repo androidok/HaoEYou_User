@@ -1,0 +1,156 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+//apply from: 'tinkerpatch.gradle'
+//apply plugin: 'walle'
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
+    defaultConfig {
+        applicationId "com.haoeyou.user"
+        minSdkVersion 17
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+//        ndk {
+//            // 设置支持的SO库架构
+//            abiFilters 'armeabi-v7a'//'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+//        }
+    }
+    //配置签名，需要写在buildType之前，不然会报错Could not find property 'debugConfig' on SigningConfig container.
+    signingConfigs {
+        debugConfig {
+            storeFile file('keystore.jks')
+            storePassword 'haoeyou123'
+            keyAlias 'keystore'
+            keyPassword 'haoeyou123'
+        }
+        release {
+            try {
+                storeFile file('keystore.jks')
+                storePassword 'haoeyou123'
+                keyAlias 'keystore'
+                keyPassword 'haoeyou123'
+            }
+            catch (ex) {
+                //throw new Exception("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties")
+            }
+        }
+    }
+    buildTypes {
+//        debug {
+//            minifyEnabled false
+//            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
+        release {
+            signingConfig signingConfigs.release
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            // 自定义输出配置
+//            applicationVariants.all { variant ->
+//                variant.outputs.each { output ->
+//                    def outputFile = output.outputFile
+//                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                        // 输出apk名称为wooyun_v1.0_wandoujia.apk
+//                        def fileName = "haoeyou_v${defaultConfig.versionName}_${variant.productFlavors[0].name}.apk"
+//                        output.outputFile = new File(outputFile.parent, fileName)
+//                    }
+//                }
+//            }
+        }
+    }
+
+    //分包设置大小
+    dexOptions {
+//        incremental true
+        jumboMode = true
+        javaMaxHeapSize "4g"
+    }
+    //[MissingTranslation]:打包的时候不需要检查String文件中是否有翻译
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    //Android Studio不会在apk打包时自动加入.so库文件,所以声明,用于环信地图
+    sourceSets {
+        main() {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    //引入网络框架
+    compile project(':okhttputils')
+    //toolbar框架
+    compile project(':statusbarlibrary')
+    //二级展开菜单,科室关注中使用
+    compile project(path: ':groupedadapter')
+    //环信的ui组件
+    compile project(':easeui')
+    //butterknife框架
+    //glide图片框架
+    //轮播框架
+    //权限请求框架
+    //选择器
+    //gson包
+    //图片选择地址 https://github.com/LuckSiege/PictureSelector
+    //compile 'com.thefinestartist:finestwebview:1.2.7'
+    //分包
+    //ormlite框架
+    //parse
+    //eventBus
+    //以下两个是腾讯gugly云端集成
+    //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+    //加载动画集成 http://ybq.github.io/Android-SpinKit/
+    //tinker的核心库
+    // 若使用annotation需要单独引用,对于tinker的其他库都无需再引用
+    //以上两个是腾讯gugly云端集成
+    //下拉刷新
+    //PDF插件,https://github.com/barteksc/AndroidPdfViewer
+    //    compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.2-alpha-8'
+    compile project(':refresh-layout')
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.youth.banner:banner:1.4.9'
+    compile 'com.zhy:mpermission-api:1.0.0'
+    compile 'com.contrarywind:Android-PickerView:3.2.5'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.github.LuckSiege.PictureSelector:picture_library:v1.5.7'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.j256.ormlite:ormlite-android:5.0'
+    compile 'com.parse:parse-android:1.15.7'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.tencent.bugly:crashreport:latest.release'
+    compile 'com.tencent.bugly:nativecrashreport:latest.release'
+    compile 'com.github.ybq:Android-SpinKit:1.0.5'
+    compile 'com.tinkerpatch.sdk:tinkerpatch-android-sdk:1.1.4'
+    compile 'com.github.barteksc:android-pdf-viewer:2.7.0-beta.1'
+    compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
+    testCompile 'junit:junit:4.12'
+    apt 'com.zhy:mpermission-compiler:1.0.0'
+    provided 'com.tencent.tinker:tinker-android-anno:1.7.7'
+//    compile 'com.meituan.android.walle:library:1.1.4'
+}
+//walle {
+//    // 指定渠道包的输出路径
+////    apkOutputFolder = new File("${project.buildDir}/outputs/channels")
+//    apkOutputFolder = new File("F:/桌面/outputs/channels")
+//    // 定制渠道包的APK的文件名称
+//    apkFileNameFormat = '${appName}-${packageName}-${channel}-${buildType}-v${versionName}-${versionCode}-${buildTime}-${flavorName}.apk'
+//    //configFile与channelFile两者必须存在一个，否则无法生成渠道包。两者都存在时优先执行configFile
+//    channelFile = new File("${project.getProjectDir()}/channel")
+//    //configFile = new File("${project.getProjectDir()}/config.json")
+//}    

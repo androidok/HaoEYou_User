@@ -1,0 +1,44 @@
+package com.haoeyou.user.adapter;
+
+import android.view.View;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+
+import butterknife.Bind;
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class FinishHolder extends BaseHolder<String> {
+    @Bind(R.id.title)
+    TextView mTitle;
+    @Bind(R.id.time)
+    TextView mTime;
+    @Bind(R.id.shortmessage)
+    TextView mMessage;
+
+
+    public FinishHolder(View view) {
+        super(view);
+    }
+
+    @Override
+    public void setData(String mData) {
+        super.setData(mData);
+//        mTitle.setText("赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医");
+//        mTime.setText("2015-05-07");
+//        mMessage.setText("赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医赴美就医");
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+}

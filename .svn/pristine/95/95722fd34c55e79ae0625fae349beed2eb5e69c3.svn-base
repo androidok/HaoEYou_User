@@ -1,0 +1,317 @@
+package com.haoeyou.user.activity;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.haoeyou.user.R;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.fragment.MainFragment;
+import com.haoeyou.user.fragment.SecondFragment;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.widget.CircleImageView;
+import com.haoeyou.user.widget.dialog.AlertDialog;
+import com.hjm.bottomtabbar.BottomTabBar;
+import com.luck.picture.lib.compress.Luban;
+import com.luck.picture.lib.model.FunctionConfig;
+import com.luck.picture.lib.model.FunctionOptions;
+import com.luck.picture.lib.model.PictureConfig;
+import com.yalantis.ucrop.entity.LocalMedia;
+import com.zhy.m.permission.MPermissions;
+import com.zhy.m.permission.PermissionDenied;
+import com.zhy.m.permission.PermissionGrant;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class MainActivity extends BaseActivity {
+    public final static String TAG = "MainActivity";
+
+    private Context mContext;
+    private CircleImageView mHeadPic;
+    private EditText mNickName;
+    private TextView mBaseInfo;
+    private TextView mHealth;
+    private TextView mHistory;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNagigationView;
+    private Toolbar mToolbar;
+    private Button mBtn;
+    @Bind(R.id.bottom_tab_bar)
+    BottomTabBar mBottomTabBar;
+    private List<LocalMedia> selectMedia = new ArrayList<LocalMedia>();
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_menu_with_toolbar;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = this;
+        initViews();
+        initToolBarConfig();
+        initBottomBar();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        String FROM = "";
+        try {
+            FROM = (String) this.getIntent().getExtras().get(Common.FROM);
+        } catch (Exception e) {
+
+        }
+        if (FillingActivity.TAG.equals(FROM)) {
+            showNoticeDialog();
+
+        }
+    }
+
+    private void showNoticeDialog() {
+        new AlertDialog(mContext).setWidthRatio(0.7f).builder()/*.setTitle(getString(R.string.prompt))*/
+        .hideTitleLayout().setMsg("为了更精准的健康管理," + "请到个人中心完善就诊人健康资料").setNegativeButton(("我知道了"), new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        }).show();
+    }
+
+
+    /**
+     * 初始化底部导航栏
+     */
+    private void initBottomBar() {
+        mBottomTabBar.init(getSupportFragmentManager()).addTabItem("首页", R.drawable.home_page_select, R.drawable
+                .home_page_unselect, MainFragment.class).addTabItem("医生", R.drawable.doctor_select, R.drawable
+                .doctor_unselect, SecondFragment.class).addTabItem("消息", R.drawable.message_select, R.drawable
+                .message_nuselect, SecondFragment.class).addTabItem("档案", R.drawable.baogao_select, R.drawable
+                .baogao_unselect, SecondFragment.class);
+        mBottomTabBar.setOnTabChangeListener(new BottomTabBar.OnTabChangeListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onTabChange(int position, String name) {
+                if (2 == position || 3 == position) {
+                    if (Common.IS_FIRST_LOAD) {
+                        LoginActivity.startAction(mContext, MainActivity.TAG);
+                        finish();
+                    }
+                }
+            }
+        });
+        TextView message = mBottomTabBar.getMessageId().get(2);
+        message.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 初始化ToolBar控件
+     */
+    private void initViews() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawerlayout);
+        mNagigationView = (NavigationView) findViewById(R.id.id_navigationview);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mBtn = (Button) findViewById(R.id.goToActionBar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+        }
+        //去除默认标题
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //创建抽屉监听
+        ActionBarDrawerToggle mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R
+                .string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mActionBarDrawerToggle.syncState();
+        //设置监听
+        mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
+        mBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //                startActivity(new Intent(MainActivity.this, SimpleMenu.class));
+            }
+        });
+        //这行代码必须在最后,不然图片设置不成功,原因可能是因为前面设置监听需要用的navigationBtn,要先让系统设置后才能替换
+        mToolbar.setNavigationIcon(R.drawable.default_head);
+        mNagigationView.setNavigationItemSelectedListener(navigaClick);
+        View headView = mNagigationView.inflateHeaderView(R.layout.nav_header_main);
+        mHeadPic = (CircleImageView) headView.findViewById(R.id.head_pic);
+        mHeadPic.setOnClickListener(click);
+        mBaseInfo = (TextView) headView.findViewById(R.id.base_info);
+        mBaseInfo.setOnClickListener(click);
+        mHealth = (TextView) headView.findViewById(R.id.health);
+        mHealth.setOnClickListener(click);
+        mHistory = (TextView) headView.findViewById(R.id.history);
+        mHistory.setOnClickListener(click);
+
+    }
+
+    private NavigationView.OnNavigationItemSelectedListener navigaClick = new NavigationView
+            .OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            //            showToast("被电击了");
+            return false;
+        }
+    };
+
+    private View.OnClickListener click = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.head_pic:
+                    showToast("头像");
+                    MPermissions.requestPermissions(MainActivity.this, Common.READ_EXTERNAL_STORAGE, Manifest
+                            .permission.WRITE_EXTERNAL_STORAGE);
+                    break;
+                case R.id.base_info:
+                    BaseInfoActivity.startAction(mContext, MainActivity.TAG);
+                    break;
+                case R.id.health:
+                    HealthInfoActivity.startAction(mContext, MainActivity.TAG);
+                    break;
+                case R.id.history:
+                    HistoryActivity.startAction(mContext, MainActivity.TAG);
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+
+    /**
+     * @param ct   上下文
+     * @param from 从哪儿跳来的
+     */
+    public static void startAction(Context ct, String from) {
+        Intent itt = new Intent(ct, MainActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        itt.putExtras(bundle);
+        ct.startActivity(itt);
+    }
+
+
+    @PermissionGrant(Common.READ_EXTERNAL_STORAGE)
+    public void requestSdcardSuccess() {
+        selectedHeadPic();
+    }
+
+    /**
+     * 头像选择
+     */
+    private void selectedHeadPic() {
+        FunctionOptions options = new FunctionOptions.Builder().setType(1) // 图片or视频 
+                // FunctionConfig.TYPE_IMAGE  TYPE_VIDEO
+                //                            .setCropMode(copyMode) // 裁剪模式 默认、1:1、3:4、3:2、16:9
+                //                            .setOffsetX() // 自定义裁剪比例
+                //                            .setOffsetY() // 自定义裁剪比例
+                .setCompress(false) //是否压缩
+                .setEnablePixelCompress(false) //是否启用像素压缩
+                .setEnableQualityCompress(false) //是否启质量压缩
+                .setMaxSelectNum(1) // 可选择图片的数量
+                .setMinSelectNum(0)// 图片或视频最低选择数量，默认代表无限制
+                .setSelectMode(FunctionConfig.MODE_SINGLE) // 单选 FunctionConfig.MODE_SINGLE or多选FunctionConfig
+                // .MODE_MULTIPLE
+                .setShowCamera(true) //是否显示拍照选项 这里自动根据type 启动拍照或录视频
+                .setEnablePreview(true) // 是否打开预览选项
+                .setEnableCrop(true) // 是否打开剪切选项
+                .setCircularCut(true)// 是否采用圆形裁剪
+                //                            .setPreviewVideo(isPreviewVideo) // 是否预览视频(播放) mode or 多选有效
+                //                            .setCheckedBoxDrawable(checkedBoxDrawable)
+                // .setRecordVideoDefinition(FunctionConfig.HIGH)
+                .setCustomQQ_theme(0)// 可自定义QQ数字风格，不传就默认是蓝色风格
+                .setGif(false)// 是否显示gif图片，默认不显示
+                //                            .setCropW(cropW) // cropW-->裁剪宽度 值不能小于100  如果值大于图片原始宽高 将返回原图大小
+                //                            .setCropH(cropH) // cropH-->裁剪高度 值不能小于100 如果值大于图片原始宽高 将返回原图大小
+                //                .setMaxB(202400) // 压缩最大值 例如:200kb  就设置202400，202400 / 1024 = 200kb
+                //                            .setPreviewColor(previewColor) //预览字体颜色
+                //                            .setCompleteColor(completeColor) //已完成字体颜色
+                //                            .setPreviewBottomBgColor(previewBottomBgColor) //预览图片底部背景色
+                //                            .setPreviewTopBgColor(previewTopBgColor)//预览图片标题背景色
+                //                            .setBottomBgColor(bottomBgColor) //图片列表底部背景色
+                .setGrade(Luban.THIRD_GEAR) // 压缩档次 默认三档
+                //                            .setCheckNumMode(isCheckNumMode).setCompressQuality(100) //
+                .setSelectMedia(selectMedia) // 已选图片，传入在次进去可选中，不能传入网络图片
+                .setCompressFlag(1) // 1 系统自带压缩 2 luban压缩
+                //                            .setCompressW(compressW) // 压缩宽 如果值大于图片原始宽高无效
+                //                            .setCompressH(compressH) // 压缩高 如果值大于图片原始宽高无效
+                //                            .setThemeStyle(themeStyle) // 设置主题样式
+                .setNumComplete(false) // 0/9 完成  样式
+                .setClickVideo(false)// 点击声音
+                .setFreeStyleCrop(false) // 裁剪是移动矩形框或是图片
+                //                            .setRotateEnabled(false) // 裁剪时是否旋转图片
+                //                            .setScaleEnabled(false)// 裁剪时是否放大小图片
+                //                            .setPicture_title_color(ContextCompat
+                //                            .getColor(AddRecordActivity.this, R.color.black)) // 设置标题字体颜色
+                //                            .setPicture_right_color(ContextCompat.getColor
+                // (AddRecordActivity
+                // .this, R.color.black)) // 设置标题右边字体颜色
+                //                            .setLeftBackDrawable(R.mipmap.back2) // 设置返回键图标
+                //                            .setStatusBar(ContextCompat.getColor(AddRecordActivity.this, R
+                // .color.white)) // 设置状态栏颜色，默认是和标题栏一致
+                //                            .setImmersive(false)// 是否改变状态栏字体颜色(黑色)
+                .create();
+
+        //                    if (mode) {
+        //                        // 只拍照
+        //                        PictureConfig.getInstance().init(options).startOpenCamera
+        // (AddRecordActivity.this);
+        //                    } else {
+        // 先初始化参数配置，在启动相册
+        PictureConfig.getInstance().init(options).openPhoto(MainActivity.this, resultCallback);
+    }
+
+    private PictureConfig.OnSelectResultCallback resultCallback = new PictureConfig.OnSelectResultCallback() {
+        @Override
+        public void onSelectSuccess(List<LocalMedia> resultList) {
+        }
+
+        @Override
+        public void onSelectSuccess(LocalMedia media) {
+            // 单选回调
+            //            selectMedia.add(media);
+            Glide.with(mContext).load(media.getCutPath())/*.override(90, 90)*/.centerCrop().diskCacheStrategy
+                    (DiskCacheStrategy.ALL).into(mHeadPic);
+        }
+    };
+
+    @PermissionDenied(Common.READ_EXTERNAL_STORAGE)
+    public void requestSdcardFailed() {
+        Toast.makeText(this, "DENY ACCESS SDCARD!", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDrawerLayout.closeDrawers();
+    }
+
+
+}

@@ -1,0 +1,44 @@
+package com.haoeyou.user.bean;
+
+/**
+ * Created by Mou on 2017/6/23.
+ */
+
+public class UploadRequestBean {
+    private String file_data_base_64;
+    private String file_name;
+    private String token;
+
+    public UploadRequestBean() {
+    }
+
+    public UploadRequestBean(String file_data_base_64, String file_name, String token) {
+        this.file_name = file_name;
+        this.token = token;
+        this.file_data_base_64 = file_data_base_64;
+    }
+
+    public String getFile_data_base_64() {
+        return file_data_base_64;
+    }
+
+    public void setFile_data_base_64(String file_data_base_64) {
+        this.file_data_base_64 = file_data_base_64;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+}

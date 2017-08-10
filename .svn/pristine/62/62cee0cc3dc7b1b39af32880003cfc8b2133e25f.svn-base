@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+              android:gravity="center"
+              android:paddingBottom="4dp"
+              android:paddingTop="4dp">
+
+    <ImageView
+        android:id="@+id/pic"
+        android:layout_width="90dp"
+        android:layout_height="match_parent"
+        android:src="@mipmap/ic_launcher"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/shortmessage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:text="美国医疗: 胰腺癌是一种恶性程度很高的消化道肿瘤，其临床特点是整个病程短、病情发展快和迅速恶化，是预后最差、也是发病率和死亡率最为接近的恶性肿瘤之一。从意大利歌唱家帕瓦罗蒂、到苹果公司前CEO乔布斯、再到诺贝尔医学奖获得者加拿大科学家拉尔夫斯坦曼等都深受其害！"
+            android:textColor="#7a8699"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxEms="18"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="5dp"
+            android:gravity="right"
+            android:paddingBottom="2dp"
+            android:paddingRight="10dp"
+            android:text="2017-06-02"
+            android:textColor="#8f9cb2"
+            android:textSize="13sp"/>
+
+
+    </LinearLayout>
+</LinearLayout>

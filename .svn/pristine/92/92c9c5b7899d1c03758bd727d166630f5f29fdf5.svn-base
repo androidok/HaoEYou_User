@@ -1,0 +1,176 @@
+package com.haoeyou.user.fragment;
+
+import android.content.Context;
+import android.graphics.Rect;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.ConsultationDetailsActivity;
+import com.haoeyou.user.activity.SimpleDetailsActivity;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.UnfinishHolder;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.widget.dialog.AlertDialog;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+
+/**
+ * Created by Mou on 2017/6/21.
+ */
+
+public class UnFinishFragment extends BaseFragment {
+    public final static String TAG = "UnFinishFragment";
+    @Bind(R.id.infor_recycle)
+    RecyclerView mInfoRecycle;
+    private Context mContext;
+    private BaseRecyclerAdapter mAdapter;
+    private TextView viceTitle;
+    private TextView thirdTitle;
+    private TextView name;
+    private TextView project;
+    private TextView service_need;
+    private TextView reason;
+    private TextView reasonForFolow;
+    private LinearLayout serviceLayout;
+
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.layout_unfinish;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        initRecycleView();
+
+    }
+
+    @Override
+    protected void lazyLoadData() {
+    }
+
+    public void initRecycleView() {
+        LinearLayoutManager mgr = new LinearLayoutManager(mContext);
+        mgr.setOrientation(LinearLayoutManager.VERTICAL);
+        mInfoRecycle.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.bottom = 20;
+            }
+        });
+        mInfoRecycle.setLayoutManager(mgr);
+        setAdapter();
+    }
+
+    public void setAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        list.add("1");
+        if (mInfoRecycle == null)
+            return;
+        if (mAdapter == null) {
+            mAdapter = new BaseRecyclerAdapter(mContext, list, R.layout.adapter_order_item, UnfinishHolder.class, new
+                    ItemListener() {
+                @Override
+                public void onItemClick(View view, int position, Object mData) {
+                    itemClick(position);
+                }
+            });
+            mInfoRecycle.setAdapter(mAdapter);
+        }
+    }
+
+    private void itemClick(int position) {
+        switch (position) {
+            case 0:
+                showPayDialog();
+                break;
+            case 1:
+                showRejectDialog();
+                break;
+            case 2:
+                ConsultationDetailsActivity.startAction(mContext, FinishFragment.TAG);
+                break;
+            case 3:
+                SimpleDetailsActivity.startAction(mContext, FinishFragment.TAG);
+                break;
+
+        }
+    }
+
+    /**
+     * 付款Dialog,书面会诊/我的预约
+     */
+    private void showPayDialog() {
+        // 加载布局  dialog
+        View view = inflaterLayout();
+        viceTitle.setVisibility(View.GONE);
+        thirdTitle.setVisibility(View.VISIBLE);
+        serviceLayout.setVisibility(View.GONE);
+        reasonForFolow.setText("服务信息:");
+        reason.setText("本地诊所会诊,一周内进行会诊");
+        new AlertDialog(mContext).setWidthRatio(0.92f).builder().addView(view).setCancelable(false).setNegativeButton
+                ("取消订单", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("我知道了");
+            }
+        }).setPositiveButton("我知道了", null).show();
+    }
+
+    /**
+     * 审核不通过Dialog,赴美就医\用药咨询\手术预约
+     */
+    private void showRejectDialog() {
+        // 加载布局  dialog
+        View view = inflaterLayout();
+        thirdTitle.setVisibility(View.GONE);
+        serviceLayout.setVisibility(View.VISIBLE);
+        name.setText("扎哇嘿夏");
+        project.setText("专科视频会诊");
+        service_need.setText("本地,一周内");
+        reasonForFolow.setText("原因如下:");
+        reason.setText("你猜我告不告诉你");
+        new AlertDialog(mContext).setWidthRatio(0.92f).builder().addView(view).setCancelable(false).setPositiveButton
+                ("我知道了", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        }).show();
+    }
+
+    private View inflaterLayout() {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_spcial_dialog, null);
+        serviceLayout = ((LinearLayout) view.findViewById(R.id.service_layout));
+        viceTitle = ((TextView) view.findViewById(R.id.vice_title));
+        thirdTitle = ((TextView) view.findViewById(R.id.third_title));
+        name = ((TextView) view.findViewById(R.id.name));
+        project = ((TextView) view.findViewById(R.id.item));
+        service_need = ((TextView) view.findViewById(R.id.service_need));
+        reasonForFolow = ((TextView) view.findViewById(R.id.reason_for_folow));
+        reason = ((TextView) view.findViewById(R.id.reason));
+        return view;
+    }
+}

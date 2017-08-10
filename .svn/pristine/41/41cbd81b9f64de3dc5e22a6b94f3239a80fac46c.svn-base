@@ -1,0 +1,99 @@
+package com.haoeyou.user.mvp.model;
+
+
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.bean.BasicRequestBean;
+import com.haoeyou.user.bean.LoginResponse;
+import com.haoeyou.user.bean.SocialDocResponseBean;
+import com.haoeyou.user.cache.UserCacheManager;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.event.MVPCallBack;
+import com.haoeyou.user.network.DataCallback;
+import com.haoeyou.user.network.NetWorking;
+import com.haoeyou.user.utils.SharedPreferencesHelper;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import okhttp3.Call;
+
+public class LoginModel implements LoginModelImp {
+
+    @Override
+    public void login(final Context mContext, final String Account, String jsonBean, final MVPCallBack<String> mBack) {
+        NetWorking.requestNetData("authorization/createToken", jsonBean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("createToken", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("createToken", response);
+                final LoginResponse bean = new Gson().fromJson(response, LoginResponse.class);
+                if ("1".equals(bean.getErrorCode())) {
+                    Common.TOKEN = bean.getToken();
+                    SharedPreferencesHelper.putString(mContext, "TOKEN", bean.getToken());
+                    //获取头像
+                    getUserEMIfor(mContext, Account, mBack);
+
+
+                } else {
+                    mBack.failed(bean.getErrorMsg());
+                }
+
+            }
+        });
+    }
+
+    private void getUserEMIfor(final Context mContext, final String Account, final MVPCallBack<String> mBack) {
+        BasicRequestBean bean = new BasicRequestBean(Account, Common.TOKEN);
+        String jsonbean = new Gson().toJson(bean);
+        NetWorking.requestNetData("chat/getSocialDoc", jsonbean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("getSocialDoc", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("getSocialDoc", response);
+                SocialDocResponseBean bean = new Gson().fromJson(response, SocialDocResponseBean.class);
+
+                if ("1".equals(bean.getErrorCode())) {
+                    UserCacheManager.save(bean.getEasymobID(), bean.getNickName(), bean.getHeadFileID());
+                    Common.EM_ID = bean.getEasymobID();
+                    Common.HEAD_URL = bean.getHeadFileID();
+                    Common.NIKE_NAME = bean.getNickName();
+                    SharedPreferencesHelper.putString(mContext, "NIKE_NAME", bean.getNickName());
+                    //TODO 环信登录 
+                    EMClient.getInstance().login(Account, "haoeyouuser", new EMCallBack() {
+                        @Override
+                        public void onSuccess() {
+                            mBack.succeed("");
+                        }
+
+                        @Override
+                        public void onError(int i, String s) {
+                            Log.e("ONE", "用户登录失败," + i + "," + s);
+                        }
+
+                        @Override
+                        public void onProgress(int i, String s) {
+
+                        }
+                    });
+
+                } else {
+                    mBack.failed(bean.getErrorMsg());
+                }
+            }
+        });
+    }
+}

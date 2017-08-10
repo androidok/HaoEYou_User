@@ -1,0 +1,47 @@
+package com.haoeyou.user.mvp.presenter;
+
+import android.content.Context;
+import android.icu.math.MathContext;
+
+import com.haoeyou.user.bean.SocialDocResponseBean;
+import com.haoeyou.user.event.MVPCallBack;
+import com.haoeyou.user.mvp.model.MainModel;
+import com.haoeyou.user.mvp.view.MainView;
+
+/**
+ * Created by Mou on 2017/6/26.
+ */
+
+public class MainPrasenter extends BasePresenter<MainView> {
+    MainModel mModel = new MainModel();
+    
+    public void uploadFile(Context mContext, String jsonBean) {
+        mModel.uploadFile(mContext,jsonBean, new MVPCallBack<Object>() {
+            @Override
+            public void succeed(Object mData) {
+                
+            }
+
+            @Override
+            public void failed(String message) {
+
+            }
+        });
+    }
+
+    public void getCurrentAcountDoc(Context mContext, String jsonBean) {
+        mModel.getCurrentAcountDoc(mContext,jsonBean, new MVPCallBack<SocialDocResponseBean>() {
+            @Override
+            public void succeed(SocialDocResponseBean mData) {
+                if (mView != null) {
+                    mView.getCurrentAcountDocSucceed(mData);
+                }
+            }
+
+            @Override
+            public void failed(String message) {
+
+            }
+        });
+    }
+}

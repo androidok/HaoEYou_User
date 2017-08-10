@@ -1,0 +1,197 @@
+package com.haoeyou.user.fragment;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.FillArchivesActivity;
+import com.haoeyou.user.adapter.ArchivesListHolder;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.bean.AllDocRequestBean;
+import com.haoeyou.user.bean.AllDocResponseBean;
+import com.haoeyou.user.bean.DocListBean;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.mvp.presenter.FourthFragmentPresenter;
+import com.haoeyou.user.mvp.view.FourthFragmentView;
+import com.haoeyou.user.utils.ButtonTools;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+/**
+ * 类名: {@link FourthFragment}
+ * <br/> 功能描述:
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/18
+ * <br/> 最后修改者:
+ * <br/> 最后修改内容:
+ */
+public class FourthFragment extends BaseFragment implements FourthFragmentView {
+    public final static String TAG = "FourthFragment";
+    @Bind(R.id.add_record)
+    Button mAddRecord;
+    @Bind(R.id.nothing)
+    LinearLayout mNothing;
+    private Context mContext;
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.more)
+    TextView mMore;
+    @Bind(R.id.image_more)
+    ImageView mImageMore;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    @Bind(R.id.report_recycle)
+    RecyclerView mReportRecycle;
+    private BaseRecyclerAdapter mReportAdapter;
+    ArrayList<DocListBean> list = new ArrayList<>();
+
+    @Override
+    public BasePresenter getPresenter() {
+        return new FourthFragmentPresenter();
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_fourth;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        mTitleTv.setText("档案");
+        mImageMore.setImageResource(R.drawable.icon_add);
+        mTitleBack.setVisibility(View.INVISIBLE);
+        mImageMore.setVisibility(View.VISIBLE);
+        initRecyclerView();
+    }
+
+    private void initRecyclerView() {
+        LinearLayoutManager mgrDoctor = new LinearLayoutManager(mContext);
+        mgrDoctor.setOrientation(LinearLayoutManager.VERTICAL);
+        mReportRecycle.setLayoutManager(mgrDoctor);
+        setDepartmentAdapter();
+    }
+
+    public void setDepartmentAdapter() {
+        if (mReportRecycle == null)
+            return;
+        if (mReportAdapter == null) {
+            mReportAdapter = new BaseRecyclerAdapter(mContext, list, R.layout.adapter_archives_item, 
+                    ArchivesListHolder.class, new ItemListener<DocListBean>() {
+                @Override
+                public void onItemClick(View view, int position, DocListBean mData) {
+                    Intent itt = new Intent(mContext, FillArchivesActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Common.FROM, FourthFragment.TAG);
+                    bundle.putString(FillArchivesActivity.TYPE, FillArchivesActivity.CHANGE);
+                    bundle.putString("DOC_NUM", mData.getPatient_id());
+                    bundle.putString("PROJECT", "");
+                    itt.putExtras(bundle);
+                    startActivityForResult(itt, 100);
+                }
+            });
+            mReportRecycle.setAdapter(mReportAdapter);
+        }
+    }
+
+    @Override
+    protected void lazyLoadData() {
+        getPatients();
+    }
+
+    private void getPatients() {
+        if (TextUtils.isEmpty(Common.TOKEN))
+            return;
+        //每次进入界面的时候都刷新一下数据
+        ((FourthFragmentPresenter) mPresenter).getAllDoc(mContext, new Gson().toJson(new AllDocRequestBean(Common
+                .TOKEN)));
+    }
+
+    @OnClick({R.id.image_more, R.id.add_record})
+    public void onViewClicked(View view) {
+        //        ButtonTools.disabledView(view, 1);
+        //                FillArchivesActivity.startAction(mContext, FourthFragment.TAG, "", "", FillArchivesActivity
+        // .ADD);
+        Intent itt = new Intent(mContext, FillArchivesActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, FourthFragment.TAG);
+        bundle.putString(FillArchivesActivity.TYPE, FillArchivesActivity.ADD);
+        bundle.putString("DOC_NUM", "");
+        bundle.putString("PROJECT", "");
+        itt.putExtras(bundle);
+        startActivityForResult(itt, 100);
+    }
+
+
+    @Override
+    public void showLoadProgressDialog(String str) {
+
+    }
+
+    @Override
+    public void disDialog() {
+
+    }
+
+    /**
+     * 获取所有资料成功
+     *
+     * @param allDoc doc列表
+     */
+    @Override
+    public void getAllDocSuccess(AllDocResponseBean allDoc) {
+        if (allDoc.getPatient_list() == null || allDoc.getPatient_list().size() == 0) {
+            mNothing.setVisibility(View.VISIBLE);
+            return;
+        }
+        mNothing.setVisibility(View.GONE);
+        if (list.size() > 0) {
+            list.clear();
+        }
+        mReportAdapter.setmDatas(allDoc.getPatient_list());
+    }
+
+    /**
+     * 获取所有资料失败
+     *
+     * @param message 失败信息
+     */
+    @Override
+    public void getAllDocFailed(String message) {
+        showBaseMessageDialog(message);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1)
+            getPatients();
+    }
+}

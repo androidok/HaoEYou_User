@@ -1,0 +1,43 @@
+package com.haoeyou.user.adapter;
+
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+
+import butterknife.Bind;
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class UnfinishHolder extends BaseHolder<String> {
+    @Bind(R.id.time)
+    TextView mTime;
+    @Bind(R.id.pic)
+    ImageView mPic;
+    @Bind(R.id.name)
+    TextView mName;
+    @Bind(R.id.project)
+    TextView mProject;
+
+    public UnfinishHolder(View view) {
+        super(view);
+    }
+
+    @Override
+    public void setData(String mData) {
+        super.setData(mData);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+}

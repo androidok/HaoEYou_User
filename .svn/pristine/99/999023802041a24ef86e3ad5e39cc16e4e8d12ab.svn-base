@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/HaoEYou_User.iml" filepath="$PROJECT_DIR$/HaoEYou_User.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bottomtabbar/bottomtabbar.iml" filepath="$PROJECT_DIR$/bottomtabbar/bottomtabbar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/groupedadapter/groupedadapter.iml" filepath="$PROJECT_DIR$/groupedadapter/groupedadapter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/okhttputils/okhttputils.iml" filepath="$PROJECT_DIR$/okhttputils/okhttputils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/statusbarlibrary/statusbarlibrary.iml" filepath="$PROJECT_DIR$/statusbarlibrary/statusbarlibrary.iml" />
+    </modules>
+  </component>
+</project>

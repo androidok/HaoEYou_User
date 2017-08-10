@@ -1,0 +1,207 @@
+package com.haoeyou.user.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.donkingliang.groupedadapter.adapter.GroupedRecyclerViewAdapter;
+import com.donkingliang.groupedadapter.holder.BaseViewHolder;
+import com.haoeyou.user.R;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.ReportExpandableAdapter;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.bean.ReportChildEntity;
+import com.haoeyou.user.bean.ReportGroupEntity;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.utils.CustomPopWindow;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+import butterknife.OnClick;
+
+public class ReportActivity extends BaseActivity {
+    public final static String TAG = "ReportActivity";
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.more)
+    TextView mMore;
+    @Bind(R.id.image_more)
+    ImageView mImageMore;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    @Bind(R.id.years)
+    TextView mYears;
+    @Bind(R.id.icon_year)
+    ImageView mIconYear;
+    @Bind(R.id.report_recycle)
+    RecyclerView mReportRecycle;
+    RecyclerView mYearsRecycle;
+    private Context mContext;
+    private BaseRecyclerAdapter mReportAdapter;
+    private ReportExpandableAdapter adapter;
+    private CustomPopWindow mCustomPopWindow;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_report;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = this;
+    }
+
+    @Override
+    protected void initEventAndData() {
+        mTitleTv.setText("XX报告");
+        initRecyclerView();
+    }
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+
+    @OnClick({R.id.title_back, R.id.years})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.title_back:
+                finish();
+                break;
+            case R.id.years:
+                showPopListView();
+                break;
+        }
+    }
+
+    private void showPopListView() {
+        View contentView = LayoutInflater.from(this).inflate(R.layout.pop_year, null);
+        //处理popWindow 显示内容
+        handleLogic(contentView);
+        //创建并显示popWindow
+        mCustomPopWindow = new CustomPopWindow.PopupWindowBuilder(this).size(160, ViewGroup.LayoutParams
+                .WRAP_CONTENT).setView(contentView).create().showAsDropDown(mYears, 40, 20);
+    }
+
+    /**
+     * 处理弹出显示内容、点击事件等逻辑
+     *
+     * @param contentView
+     */
+    private void handleLogic(View contentView) {
+        TextView mFirstYear = (TextView) contentView.findViewById(R.id.first_year);
+        TextView mSecondYear = (TextView) contentView.findViewById(R.id.second_year);
+        View.OnClickListener click = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCustomPopWindow.dismiss();
+                switch (v.getId()) {
+                    case R.id.first_year:
+                        mYears.setText("2017年");
+                        break;
+                    case R.id.second_year:
+                        mYears.setText("2018年");
+                        break;
+                }
+            }
+        };
+        mFirstYear.setOnClickListener(click);
+        mSecondYear.setOnClickListener(click);
+        //        mYearsRecycle = (RecyclerView) contentView.findViewById(R.id.years_recycle);
+        //        mYearsRecycle.setItemAnimator(new DefaultItemAnimator());
+        //        mYearsRecycle.setLayoutManager(new LinearLayoutManager(this));
+        //        ArrayList<String> list = new ArrayList<>();
+        //        for (int i = 0; i < 5; i++) {
+        //            list.add(String.valueOf(2017 + i) + "年");
+        //        }
+        //        if (mReportRecycle == null)
+        //            return;
+        //        if (mReportAdapter == null) {
+        //            mReportAdapter = new BaseRecyclerAdapter(list, R.layout.adapter_years_item, YearsListHolder
+        // .class, new 
+        //                    ItemListener<String>() {
+        //                @Override
+        //                public void onItemClick(View view, int position, String mData) {
+        //                }
+        //            });
+        //            mReportRecycle.setAdapter(mReportAdapter);
+        //        } else {
+        //            if ((mReportAdapter.getItem(0) == null) && (list.size() == 0))
+        //                return;
+        //            if ((mReportAdapter.getItem(0) == null) || (list.size() == 0))
+        //                mReportAdapter.setmDatas(list);
+        //        }
+    }
+
+
+    private void initRecyclerView() {
+        mReportRecycle.setItemAnimator(new DefaultItemAnimator());
+        mReportRecycle.setLayoutManager(new LinearLayoutManager(this));
+        setGroupAdapter();
+    }
+
+    private void setGroupAdapter() {
+        ArrayList<ReportGroupEntity> GroupList = new ArrayList<ReportGroupEntity>();
+        ArrayList<ReportChildEntity> childGroup = new ArrayList<ReportChildEntity>();
+        childGroup.add(new ReportChildEntity("Devian", "2019-01-12"));
+        childGroup.add(new ReportChildEntity("Devian", "2019-01-12"));
+        GroupList.add(new ReportGroupEntity("01", "Devina", "心脏检测报告", false, childGroup));
+        GroupList.add(new ReportGroupEntity("01", "Devina", "心脏检测报告", false, childGroup));
+        if (mReportRecycle == null) {
+            return;
+        }
+        if (adapter == null) {
+            adapter = new ReportExpandableAdapter(this, GroupList);
+        }
+
+        adapter.setOnHeaderClickListener(new GroupedRecyclerViewAdapter.OnHeaderClickListener() {
+            @Override
+            public void onHeaderClick(GroupedRecyclerViewAdapter adapter, BaseViewHolder holder, int groupPosition) {
+
+                ReportExpandableAdapter reportAdapter = (ReportExpandableAdapter) adapter;
+                if (reportAdapter.isExpand(groupPosition)) {
+                    reportAdapter.collapseGroup(groupPosition);
+                } else {
+                    reportAdapter.expandGroup(groupPosition);
+                }
+            }
+        });
+        adapter.setOnChildClickListener(new GroupedRecyclerViewAdapter.OnChildClickListener() {
+            @Override
+            public void onChildClick(GroupedRecyclerViewAdapter adapter, BaseViewHolder holder, int groupPosition, 
+                                     int childPosition) {
+                Toast.makeText(mContext, "子项：groupPosition = " + groupPosition + ", childPosition = " + 
+                        childPosition, Toast.LENGTH_LONG).show();
+            }
+        });
+        mReportRecycle.setAdapter(adapter);
+    }
+
+
+    /**
+     * @param ct   上下文
+     * @param from 从哪儿跳来的
+     */
+    public static void startAction(Context ct, String from) {
+        Intent itt = new Intent(ct, ReportActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        itt.putExtras(bundle);
+        ct.startActivity(itt);
+    }
+}

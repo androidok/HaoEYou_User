@@ -1,0 +1,10 @@
+package com.haoeyou.user.mvp.presenter;
+
+import com.haoeyou.user.mvp.view.SecondFragmentView;
+
+/**
+ * Created by Mou on 2017/6/1.
+ */
+
+public class SecondPresenter extends BasePresenter<SecondFragmentView> {
+}

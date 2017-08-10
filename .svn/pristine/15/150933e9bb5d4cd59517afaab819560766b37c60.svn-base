@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.haoeyou.user.activity.DoctorActivity">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/toolbar_layout"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#D6E2F5">
+    </View>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/doctor_background"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/pic"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="12dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/department"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            android:text="心血管专科"
+                            android:textColor="#3eb0ff"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Ronald McGee M.D"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"/>
+
+                        <TextView
+                            android:id="@+id/degree"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="主任医师、临床教授、资深研究员、医学博士"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:text="所在地:"
+                                android:textColor="#7a8699"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:id="@+id/area"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:text="美国"
+                                android:textColor="#7a8699"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:text="性别:"
+                                android:textColor="#7a8699"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:id="@+id/sex"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:text="男"
+                                android:textColor="#7a8699"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:text="职业证书编号:"
+                                android:textColor="#7a8699"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:id="@+id/number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:ellipsize="end"
+                                android:text="A 104432"
+                                android:textColor="#3eb0ff"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="14dp"
+                        android:text="服务项目:"
+                        android:textColor="#333333"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/service_project"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="介入性心脏学"
+                        android:textColor="#333333"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/feat_background"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="专长:"
+                        android:textColor="#333333"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/feat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="偏头痛、老人痴呆症、卒中，以及帕金森综合症、特发性震颤、不宁腿综合症、肌张力障碍等各类型神经肌肉疾病"
+                        android:textColor="#333333"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginTop="20dp"
+                android:text="简历:"
+                android:textColor="#8f9cb2"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/resume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginTop="5dp"
+                android:text="Kenneth P. Martinez M.D（肯尼斯P.马丁内斯博士）拥有美国精神科学与神经科学委员会(American Board of Psychiatry and Neurology)认证的专科医师资格，曾就职于凯泽南加州医疗集团(Kaiser Southern California Permanente Medical Group)神经科。2001年，他成功创建了神经疼痛专科中心(Neurology and Pain Specialty Center)并担任主任医师，与团队中其他卓越的神经科专家共同致力于复杂神经系统疾病的研究，在神经系统疾病领域具备丰富的科研和专科临床经验。
+针对神经肌肉疾病，马丁内斯博士及其团队，通过进行肌电图(EMG)和神经传导研究(nc)帮助证实或排除腕管综合征(CTS)的存在，以及诊断尺神经麻痹、脊髓病、神经病变或神经根病等。针对神经运动障碍疾病，如帕金森病、特发性震颤、亨廷顿氏舞蹈症、抽动、肌萎缩性侧索硬化症和肌张力障碍等，马丁内斯博士为患者提供全面的疾病管理计划，涵盖药物管理、饮食和营养、运动/健身计划、物理/职业/语言治疗、手术治疗的选择，以及病人和照顾者支援团。此外，马丁内斯博士也非常擅长各类头痛的治疗和护理，对于创伤性脑损伤(TBI)、脑震荡、脑震荡后综合征等引发的慢性头痛，可提供卓越的综合治疗。"
+                android:textColor="#8f9cb2"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#D6E2F5">
+    </View>
+
+    <include layout="@layout/button_layout"/>
+
+</LinearLayout>

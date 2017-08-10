@@ -1,0 +1,270 @@
+package com.haoeyou.user.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.R;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.bean.CodeBean;
+import com.haoeyou.user.bean.PasswordResetBean;
+import com.haoeyou.user.bean.RegisterBean;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.mvp.presenter.FillingPresenter;
+import com.haoeyou.user.mvp.presenter.FindPassPresenter;
+import com.haoeyou.user.mvp.presenter.RegisterPresenter;
+import com.haoeyou.user.mvp.view.FindPassView;
+import com.haoeyou.user.utils.PhoneFormatCheckUtils;
+import com.haoeyou.user.widget.dialog.AlertDialog;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+/**
+ * 类名: {@link FindPassActivity}
+ * <br/> 功能描述:找回密码界面
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/23
+ */
+public class FindPassActivity extends BaseActivity implements FindPassView {
+    public static final String TAG = "FindPassActivity";
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.tel)
+    EditText mTel;
+    @Bind(R.id.clean)
+    ImageView mClean;
+    @Bind(R.id.code)
+    EditText mCode;
+    @Bind(R.id.get_code)
+    TextView mGetCode;
+    @Bind(R.id.password)
+    EditText mPassword;
+    @Bind(R.id.normal_btn)
+    Button mNormalBtn;
+    private Context mContext;
+    private Boolean telFlag = false;
+    private Boolean codeFlag = false;
+    private Boolean passFlag = false;
+    private CountDownTimer timer;
+
+    @Override
+    public BasePresenter getPresenter() {
+        return new FindPassPresenter();
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_find_pass;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = this;
+    }
+
+    @Override
+    protected void initEventAndData() {
+        initWidget();
+    }
+
+    private void initWidget() {
+        mTitleBack.setImageResource(R.drawable.icon_back);
+        mTitleTv.setText(R.string.password_retrieval);
+        mNormalBtn.setText(R.string.password_retrieval);
+        mTel.setText(getIntent().getExtras().getString("ACOUNT"));
+        setOnChangeListener();
+    }
+
+    @OnClick({R.id.clean, R.id.get_code, R.id.normal_btn, R.id.title_back})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.clean:
+                mTel.setText("");
+                break;
+            case R.id.get_code:
+                if (PhoneFormatCheckUtils.isChinaPhoneLegal(mTel.getText().toString().trim())) {
+                    starCountDown();
+                    mGetCode.setTextColor(Color.parseColor("#a1a1a1"));
+                    mGetCode.setClickable(false);
+                    String jsonBean = new Gson().toJson(new CodeBean(mTel.getText().toString().trim()));
+                    ((FindPassPresenter) mPresenter).getVerificationCode(mContext, jsonBean);
+                }
+                break;
+            case R.id.title_back:
+                LoginActivity.startAction(mContext, mTel.getText().toString(), RegisterActivity.TAG);
+                finish();
+                break;
+            case R.id.normal_btn:
+                String jsonBean = new Gson().toJson(new PasswordResetBean(mTel.getText().toString(), mCode.getText()
+                        .toString(), mPassword.getText().toString()));
+                ((FindPassPresenter) mPresenter).resetPassword(mContext, jsonBean);
+                break;
+        }
+    }
+
+    /**
+     * <br/> 方法名称: starCountDown
+     * <br/> 方法详述: 开始倒计时
+     */
+    private void starCountDown() {
+        timer = new CountDownTimer(30000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                mGetCode.setText(millisUntilFinished / 1000 + "后重新获取");
+            }
+
+            public void onFinish() {
+                mGetCode.setText("获取验证码");
+                mGetCode.setClickable(true);
+                mGetCode.setTextColor(Color.parseColor("#3eb0ff"));
+            }
+
+        }.start();
+    }
+
+    private void setOnChangeListener() {
+        mTel.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (PhoneFormatCheckUtils.isChinaPhoneLegal(mTel.getText().toString().trim())) {
+                    telFlag = true;
+                    checkIsCanRegister();
+                } else {
+                    telFlag = false;
+                }
+            }
+        });
+        mCode.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (6 == mCode.getText().toString().length()) {
+                    codeFlag = true;
+                    checkIsCanRegister();
+                } else {
+                    codeFlag = false;
+                }
+            }
+        });
+        mPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (6 <= mPassword.getText().toString().trim().length()) {
+                    passFlag = true;
+                    checkIsCanRegister();
+                } else {
+                    passFlag = false;
+                }
+            }
+        });
+    }
+
+    /**
+     * <br/> 方法名称: checkIsCanRegister
+     * <br/> 方法详述: 判断是否可以点击
+     */
+    private void checkIsCanRegister() {
+        if (telFlag && codeFlag && passFlag) {
+            mNormalBtn.setBackgroundResource(R.drawable.selector_save);
+            mNormalBtn.setClickable(true);
+        } else {
+            mNormalBtn.setBackgroundResource(R.drawable.gray_background);
+            mNormalBtn.setClickable(false);
+        }
+    }
+
+    /**
+     * @param ct   上下文
+     * @param from 从哪儿跳来的
+     */
+    public static void startAction(Context ct, String account, String from) {
+        Intent itt = new Intent(ct, FindPassActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        bundle.putString("ACOUNT", account);
+        itt.putExtras(bundle);
+        ct.startActivity(itt);
+    }
+
+    @Override
+    public void showLoadProgressDialog(String str) {
+
+    }
+
+    @Override
+    public void disDialog() {
+
+    }
+
+    @Override
+    public void resetPassSuccess() {
+        new AlertDialog(this).setWidthRatio(0.7f).setMessageGravity(Gravity.CENTER).builder()/*.setTitle(getString(R
+        .string
+        .prompt))*/.hideTitleLayout().setMsg("密码重置成功!").setCancelable(false).setNegativeButton(("去登陆"), new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginActivity.startAction(mContext, mTel.getText().toString(), FindPassActivity.TAG);
+                finish();
+            }
+        }).show();
+    }
+
+    @Override
+    public void resetPassFailed(String message) {
+        showBaseMessageDialog(message);
+    }
+
+    @Override
+    protected void onStop() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        super.onStop();
+    }
+}

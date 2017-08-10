@@ -1,0 +1,30 @@
+package com.haoeyou.user.mvp.model;
+
+import android.content.Context;
+
+import com.haoeyou.user.event.MVPCallBack;
+import com.haoeyou.user.network.DataCallback;
+import com.haoeyou.user.network.NetWorking;
+
+import okhttp3.Call;
+
+/**
+ * Created by Mou on 2017/6/20.
+ */
+
+public class WebPageModel implements WebPageModelImp {
+    @Override
+    public void getVisitingNameList(Context mContext, String jsonBean, MVPCallBack mBack) {
+        NetWorking.requestNetData("", jsonBean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+
+            }
+        });
+    }
+}

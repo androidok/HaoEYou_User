@@ -1,0 +1,277 @@
+package com.haoeyou.user.activity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.haoeyou.user.R;
+import com.haoeyou.user.base.BaseActivity;
+import com.haoeyou.user.bean.DocAddRequestBean;
+import com.haoeyou.user.bean.DocBean;
+import com.haoeyou.user.common.Common;
+import com.haoeyou.user.entity.PickerListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+import com.haoeyou.user.network.DataCallback;
+import com.haoeyou.user.network.NetWorking;
+import com.haoeyou.user.utils.PickerUtils;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+import butterknife.OnClick;
+import okhttp3.Call;
+
+/**
+ * 类名: {@link FillingActivity}
+ * <br/> 功能描述:资料填写引导页面
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/24
+ */
+public class FillingActivity extends BaseActivity {
+
+
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.more)
+    TextView mMore;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    @Bind(R.id.name)
+    EditText mName;
+    @Bind(R.id.birthday)
+    TextView mBirthday;
+    @Bind(R.id.tel)
+    EditText mTel;
+    @Bind(R.id.area)
+    TextView mArea;
+    @Bind(R.id.department)
+    TextView mDepartment;
+    @Bind(R.id.is_exercise)
+    TextView mIsExercise;
+    @Bind(R.id.is_smoking)
+    TextView mIsSmoking;
+    @Bind(R.id.is_drinking)
+    TextView mIsDrinking;
+    @Bind(R.id.sex)
+    TextView mSex;
+    @Bind(R.id.genetic_history)
+    TextView mGeneticHistory;
+    @Bind(R.id.allergy)
+    TextView mAllergy;
+    @Bind(R.id.blood)
+    TextView mBloodType;
+    @Bind(R.id.normal_btn)
+    Button mNormalBtn;
+    @Bind(R.id.button_layout)
+    LinearLayout mButtonLayout;
+
+    private Context mContext;
+    public static final String TAG = "FillingActivity";
+    private PickerUtils mPicker;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_filling;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = this;
+        //        onTintStatusBar();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        mTitleTv.setText("就诊人健康资料");
+        mMore.setText("跳过");
+        mNormalBtn.setText("完成");
+        mNormalBtn.setBackgroundResource(R.drawable.selector_save);
+        mPicker = new PickerUtils(mContext);
+    }
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+
+    @OnClick({R.id.title_back, R.id.more, R.id.birthday, R.id.area, R.id.department, R.id.is_exercise, R.id
+            .is_smoking, R.id.is_drinking, R.id.genetic_history, R.id.allergy, R.id.normal_btn, R.id.sex, R.id.blood})
+    public void onViewClicked(View view) {
+
+        switch (view.getId()) {
+            case R.id.title_back:
+                LoginActivity.startAction(mContext, FillingActivity.TAG);
+                finish();
+                break;
+            case R.id.more:
+                /*跳转到MainActivity*/
+                finish();
+                break;
+            case R.id.birthday:
+                closeInputBroad();
+                showBirthdayPicker();
+                break;
+            case R.id.sex:
+                closeInputBroad();
+                showSexPicker();
+                break;
+            case R.id.area:
+                closeInputBroad();
+                showAreaPicker();
+                break;
+            case R.id.blood:
+                showBloodPicker();
+                break;
+            case R.id.department:
+                gotoEditInfo(FillingActivity.TAG, "", 102, CareDepartmentActivity.class);
+                break;
+            case R.id.is_exercise:
+                closeInputBroad();
+                showWhetherPicker(mIsExercise);
+                break;
+            case R.id.is_smoking:
+                showWhetherPicker(mIsSmoking);
+                break;
+            case R.id.is_drinking:
+                showWhetherPicker(mIsDrinking);
+                break;
+            case R.id.genetic_history://遗传
+                gotoEditInfo(FillingActivity.TAG, mGeneticHistory.getText().toString(), 100, EditInfoActivity.class);
+                break;
+            case R.id.allergy://过敏
+                gotoEditInfo(FillingActivity.TAG, mAllergy.getText().toString(), 101, EditInfoActivity.class);
+                break;
+            case R.id.normal_btn:
+                addDoc();
+                break;
+        }
+    }
+
+    private void addDoc() {
+        String jsonBean = new Gson().toJson(new DocAddRequestBean(Common.TOKEN, mIsExercise.getText().toString(), 
+                mIsSmoking.getText().toString(), mIsDrinking.getText().toString(), mGeneticHistory.getText().toString
+                (), mAllergy.getText().toString(), new DocBean("", mName.getText().toString(), mBirthday.getText()
+                .toString(), mTel.getText().toString(), mArea.getText().toString(), (mDepartment.getText().toString()
+        ).split(","))));
+        NetWorking.requestNetData("userside/addHealthDoc", jsonBean, new DataCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Log.e("userside/addHealthDoc", e.getMessage());
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.e("userside/addHealthDoc", response);
+                finish();
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (1 == resultCode) {
+
+            if (100 == requestCode) {
+                mGeneticHistory.setText(data.getExtras().get("INFO").toString());
+            } else if (101 == requestCode) {
+                mAllergy.setText(data.getExtras().get("INFO").toString());
+            } else if (102 == requestCode) {
+                mDepartment.setText(data.getExtras().get("DEPART").toString());
+            }
+        }
+    }
+
+
+    private void gotoEditInfo(String from, String info, int requestCode, Class<?> cls) {
+        Intent itt = new Intent(FillingActivity.this, cls);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        bundle.putString("PRE_INFO", info);
+        itt.putExtras(bundle);
+        startActivityForResult(itt, requestCode);
+    }
+
+
+    private void showSexPicker() {
+        mPicker.buildSexPicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                mSex.setText(data);
+            }
+        });
+    }
+
+    private void showWhetherPicker(final TextView edit) {
+        mPicker.buildWhetherPicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                edit.setText(data);
+            }
+        });
+    }
+
+    private void showBirthdayPicker() {
+        mPicker.buildBirthdayPicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                mBirthday.setText(data);
+            }
+        });
+    }
+
+
+    private void showAreaPicker() {
+        mPicker.buildAreaPicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                mArea.setText(data);
+            }
+        });
+    }
+
+    private void showBloodPicker() {
+        mPicker.buildBloodTypePicker(new PickerListener() {
+            @Override
+            public void pickerData(int position, String data) {
+                mBloodType.setText(data);
+            }
+        });
+    }
+
+    /**
+     * <br/> 方法名称: closeInputBroad
+     * <br/> 方法详述: 关闭软键盘
+     */
+    private void closeInputBroad() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mName.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(mTel.getWindowToken(), 0);
+    }
+
+    /**
+     * @param ct   上下文
+     * @param from 从哪儿跳来的
+     */
+    public static void startAction(Context ct, String from) {
+        Intent itt = new Intent(ct, FillingActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Common.FROM, from);
+        itt.putExtras(bundle);
+        ct.startActivity(itt);
+    }
+
+}

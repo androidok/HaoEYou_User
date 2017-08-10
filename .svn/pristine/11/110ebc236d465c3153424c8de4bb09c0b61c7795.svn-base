@@ -1,0 +1,15 @@
+package com.haoeyou.user.mvp.view;
+
+import com.haoeyou.user.bean.SocialDocResponseBean;
+
+/**
+ * Created by Mou on 2017/6/26.
+ */
+
+public interface MainView extends BaseView {
+
+
+    void alterFileSuccess();
+
+    void alterNikeNameSuccess();
+}

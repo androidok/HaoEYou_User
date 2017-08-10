@@ -1,0 +1,13 @@
+package com.haoeyou.user.mvp.model;
+
+import android.content.Context;
+
+import com.haoeyou.user.event.MVPCallBack;
+
+/**
+ * Created by Mou on 2017/6/20.
+ */
+
+public interface WebPageModelImp extends BaseModel {
+    void getVisitingNameList(Context mContext, String jsonBean, MVPCallBack mBack);
+}

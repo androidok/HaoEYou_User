@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main$Generated" generated="true"><source path="E:\AS_CODE\HaoEYou_User\bottomtabbar\src\main\res"/><source path="E:\AS_CODE\HaoEYou_User\bottomtabbar\build\generated\res\rs\release"/><source path="E:\AS_CODE\HaoEYou_User\bottomtabbar\build\generated\res\resValues\release"/></dataSet><dataSet config="release$Generated" generated="true"><source path="E:\AS_CODE\HaoEYou_User\bottomtabbar\src\release\res"/></dataSet><dataSet config="main" generated-set="main$Generated"><source path="E:\AS_CODE\HaoEYou_User\bottomtabbar\src\main\res"><file name="bottom_tab_bar" path="E:\AS_CODE\HaoEYou_User\bottomtabbar\src\main\res\layout\bottom_tab_bar.xml" qualifiers="" type="layout"/><file name="tab_item" path="E:\AS_CODE\HaoEYou_User\bottomtabbar\src\main\res\layout\tab_item.xml" qualifiers="" type="layout"/><file path="E:\AS_CODE\HaoEYou_User\bottomtabbar\src\main\res\values\attrs.xml" qualifiers=""><declare-styleable name="BottomTabBar">
+        
+        <attr format="color" name="tab_bar_background"/>
+        
+        <attr format="dimension" name="tab_img_width"/>
+        
+        <attr format="dimension" name="tab_img_height"/>
+        
+        <attr format="dimension" name="tab_font_size"/>
+        
+        <attr format="dimension" name="tab_padding_top"/>
+        
+        <attr format="dimension" name="tab_img_font_padding"/>
+        
+        <attr format="dimension" name="tab_padding_bottom"/>
+        
+        <attr format="boolean" name="tab_isshow_divider"/>
+        
+        <attr format="dimension" name="tab_divider_height"/>
+        
+        <attr format="color" name="tab_divider_background"/>
+        
+        <attr format="color" name="tab_selected_color"/>
+        
+        <attr format="color" name="tab_unselected_color"/>
+    </declare-styleable></file><file path="E:\AS_CODE\HaoEYou_User\bottomtabbar\src\main\res\values\strings.xml" qualifiers=""><string name="app_name">BottomTabBar</string></file></source><source path="E:\AS_CODE\HaoEYou_User\bottomtabbar\build\generated\res\rs\release"/><source path="E:\AS_CODE\HaoEYou_User\bottomtabbar\build\generated\res\resValues\release"/></dataSet><dataSet config="release" generated-set="release$Generated"><source path="E:\AS_CODE\HaoEYou_User\bottomtabbar\src\release\res"/></dataSet><mergedItems><configuration qualifiers=""><declare-styleable name="BottomTabBar"><attr format="color" name="tab_bar_background"/><attr format="dimension" name="tab_img_width"/><attr format="dimension" name="tab_img_height"/><attr format="dimension" name="tab_font_size"/><attr format="dimension" name="tab_padding_top"/><attr format="dimension" name="tab_img_font_padding"/><attr format="dimension" name="tab_padding_bottom"/><attr format="boolean" name="tab_isshow_divider"/><attr format="dimension" name="tab_divider_height"/><attr format="color" name="tab_divider_background"/><attr format="color" name="tab_selected_color"/><attr format="color" name="tab_unselected_color"/></declare-styleable></configuration></mergedItems></merger>

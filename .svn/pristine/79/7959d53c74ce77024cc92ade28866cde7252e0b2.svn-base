@@ -1,0 +1,112 @@
+package com.haoeyou.user.fragment;
+
+import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.haoeyou.user.R;
+import com.haoeyou.user.activity.FillArchivesActivity;
+import com.haoeyou.user.adapter.BaseRecyclerAdapter;
+import com.haoeyou.user.adapter.RrchivesListHolder;
+import com.haoeyou.user.base.BaseFragment;
+import com.haoeyou.user.event.ItemListener;
+import com.haoeyou.user.mvp.presenter.BasePresenter;
+
+import java.util.ArrayList;
+
+import butterknife.Bind;
+import butterknife.OnClick;
+
+/**
+ * 类名: {@link FourthFragment}
+ * <br/> 功能描述:
+ * <br/> 作者: MouTao
+ * <br/> 时间: 2017/5/18
+ * <br/> 最后修改者:
+ * <br/> 最后修改内容:
+ */
+public class FourthFragment extends BaseFragment {
+    public final static String TAG = "FourthFragment";
+    private Context mContext;
+    @Bind(R.id.title_back)
+    ImageView mTitleBack;
+    @Bind(R.id.title_tv)
+    TextView mTitleTv;
+    @Bind(R.id.more)
+    TextView mMore;
+    @Bind(R.id.image_more)
+    ImageView mImageMore;
+    @Bind(R.id.toolbar_layout)
+    RelativeLayout mToolbarLayout;
+    @Bind(R.id.report_recycle)
+    RecyclerView mReportRecycle;
+    private BaseRecyclerAdapter mReportAdapter;
+
+    @Override
+    public BasePresenter getPresenter() {
+        return null;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_fourth;
+    }
+
+    @Override
+    protected void initInjector() {
+        mContext = getActivity();
+    }
+
+    @Override
+    protected void initEventAndData() {
+        mTitleTv.setText("档案");
+        mImageMore.setImageResource(R.drawable.icon_add);
+        mImageMore.setVisibility(View.VISIBLE);
+        mTitleBack.setVisibility(View.INVISIBLE);
+        initRecyclerView();
+    }
+
+    private void initRecyclerView() {
+        LinearLayoutManager mgrDoctor = new LinearLayoutManager(mContext);
+        mgrDoctor.setOrientation(LinearLayoutManager.VERTICAL);
+        mReportRecycle.setLayoutManager(mgrDoctor);
+        setDepartmentAdapter();
+    }
+
+    public void setDepartmentAdapter() {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            list.add("1");
+        }
+        if (mReportRecycle == null)
+            return;
+        if (mReportAdapter == null) {
+            mReportAdapter = new BaseRecyclerAdapter(list, R.layout.adapter_archives_item, RrchivesListHolder.class, 
+                    new ItemListener<String>() {
+                @Override
+                public void onItemClick(View view, int position, String mData) {
+                }
+            });
+            mReportRecycle.setAdapter(mReportAdapter);
+        } else {
+            if ((mReportAdapter.getItem(0) == null) && (list.size() == 0))
+                return;
+            if ((mReportAdapter.getItem(0) == null) || (list.size() == 0))
+                mReportAdapter.setmDatas(list);
+        }
+    }
+
+    @Override
+    protected void lazyLoadData() {
+
+    }
+
+    @OnClick(R.id.image_more)
+    public void onViewClicked() {
+        FillArchivesActivity.startAction(mContext, FourthFragment.TAG);
+    }
+}

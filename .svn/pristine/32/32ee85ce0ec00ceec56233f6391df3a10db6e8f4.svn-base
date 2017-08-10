@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<LinearLayout-->
+<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:hjm="http://schemas.android.com/apk/res-auto"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--android:fitsSystemWindows="true"-->
+<!--android:orientation="vertical"-->
+<!--tools:context="com.haoeyou.user.activity.menu.SimpleMenu">-->
+
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:hjm="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/contentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@mipmap/ic_launcher"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            />
+
+        <com.hjm.bottomtabbar.BottomTabBar
+            android:id="@+id/bottom_tab_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            hjm:tab_divider_background="#FF0000"
+            hjm:tab_divider_height="5dp"
+            hjm:tab_font_size="6sp"
+            hjm:tab_img_font_padding="0dp"
+            hjm:tab_img_height="30dp"
+            hjm:tab_img_width="30dp"
+            hjm:tab_isshow_divider="true"
+            hjm:tab_padding_bottom="5dp"
+            hjm:tab_padding_top="8dp"
+            hjm:tab_selected_color="@color/actionsheet_blue"
+            hjm:tab_unselected_color="@color/white"/>
+    </LinearLayout>
+
+    <include
+        layout="@layout/layout_personinfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="#fff"
+        android:tag="left"/>
+</android.support.v4.widget.DrawerLayout>
+    <!--</LinearLayout>-->

@@ -1,0 +1,30 @@
+package com.haoeyou.user.adapter;
+
+import android.view.View;
+
+/**
+ * Created by Administrator on 2017/3/7.
+ */
+public class DepartListHolder extends BaseHolder<String> {
+
+
+    public DepartListHolder(View view) {
+        super(view);
+    }
+
+    @Override
+    public void setData(String mData) {
+        super.setData(mData);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(v, getPosition(), mData);
+            }
+        });
+    }
+}
